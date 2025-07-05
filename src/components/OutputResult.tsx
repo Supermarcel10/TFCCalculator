@@ -9,7 +9,7 @@ const failureFormatting = "bg-yellow-400 text-black";
 interface OutputResultProps {
 	output : MetalProductionResult | null;
 	unit : DesiredOutputTypes;
-	conversions : Record<DesiredOutputTypes, number>;
+	conversions : Record<string, number>;
 }
 
 export function OutputResult({output, unit, conversions} : Readonly<OutputResultProps>) {
@@ -28,14 +28,13 @@ function GetInnerOutput(output : MetalProductionResult, unit : DesiredOutputType
 	const success = output.success;
 
 	const displayQuantity = output.outputMb / (conversions[unit] ?? 1);
-	const displayUnit = DesiredOutputTypes[unit].toLowerCase();
 	const plural = displayQuantity > 1 ? "s" : "";
 
 	if (!success) return (<p className="text-lg text-center">{output.message}!</p>)
 
 	return (
 			<div>
-				<p className="text-xl text-center">Yields exactly {displayQuantity} {displayUnit}{plural}!</p>
+				<p className="text-xl text-center">Yields exactly {displayQuantity} {unit}{plural}!</p>
 				<div className="p-4">
 					<div className="flex flex-wrap justify-center gap-4">
 						{output.usedMinerals.map(usedMineral => {

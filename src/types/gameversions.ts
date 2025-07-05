@@ -1,9 +1,9 @@
 export type VersionType = "mod" | "modpack";
 
 export interface Constants {
-	ingotMb : number;
-	nuggetMb : number;
-	blockMb : number;
+	nuggetMb? : number;
+	ingotMb? : number;
+	blockMb? : number;
 }
 
 export interface BaseGameVersion {
@@ -15,8 +15,9 @@ export interface BaseGameVersion {
 	supported : boolean;
 }
 
+// TODO: Deprecate in favour of enum!
 export interface ModpackVersion extends BaseGameVersion {}
-
+// TODO: Deprecate in favour of enum!
 export interface ModVersion extends BaseGameVersion {}
 
 export interface GameVersions {

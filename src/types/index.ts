@@ -1,14 +1,18 @@
 export interface SmeltingOutput {
 	name : string;
 	components : SmeltingComponent[];
-	isMineral : boolean;
 	producible? : boolean;
+	type : SmeltingOutputType;
+	default? : string[];
+}
+
+export enum SmeltingOutputType {
+	METAL,
+	ALLOY
 }
 
 export interface SmeltingComponent {
 	mineral : string;
-	hasIngot? : boolean;
-	hasNugget? : boolean;
 	min : number;
 	max : number;
 }
@@ -20,6 +24,10 @@ export interface InputMineral {
 	uses? : MineralUseCase[];
 }
 
+export interface QuantifiedInputMineral extends InputMineral {
+	quantity : number;
+}
+
 export enum MineralUseCase {
 	Vessel = "vessel",
 	Crucible = "crucible",
@@ -28,7 +36,7 @@ export enum MineralUseCase {
 }
 
 export enum DesiredOutputTypes {
-	Ingot,
-	Nugget,
-	Millibucket
+	Ingot = "ingot",
+	Nugget = "nugget",
+	Millibucket = "millibucket"
 }

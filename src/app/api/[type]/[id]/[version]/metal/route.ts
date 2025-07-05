@@ -1,21 +1,39 @@
-import {SmeltingOutput} from "@/types";
 import {NextResponse} from "next/server";
-import metalsJson from "@/data/metals.json";
+import {RouteParams, VersionType} from "@/types/gameversions";
+import {DataMapperService, DataServiceError} from "@/services/data/dataMapperService";
+import {DataReaderService} from "@/services/data/dataReaderService";
 
 
-export async function GET() {
-	const metals : SmeltingOutput[] = metalsJson.metals.map(m => ({
-		name : m.name,
-		components : [],
-		isMineral : true,
-		producible : m.producible !== false
-	})).filter(mineral => mineral.producible);
+interface RouteContext {
+	params : Promise<{
+		type : VersionType;
+		id : string;
+		version : string;
+	}>;
+}
 
-	const alloys : SmeltingOutput[] = metalsJson.alloys.map(a => ({
-		name : a.name,
-		components : a.components,
-		isMineral : false
-	}));
+export async function GET(
+		_ : Request,
+		context : RouteContext
+) {
+	const {type, id, version} = await context.params;
 
-	return NextResponse.json([...alloys, ...metals]);
+	try {
+		const dataMapperService = new DataMapperService(new DataReaderService());
+		return NextResponse.json(await dataMapperService.getAvailableOutputs({type, id, version}));
+	} catch (error) {
+		if (error && error instanceof DataServiceError) {
+			console.error(`${error.message}: ${error.originalError}`);
+			return NextResponse.json(
+				{message : error.message},
+				{status : error.status}
+			);
+		}
+
+		console.error(`Failed to fetch metals data: ${error}`);
+		return NextResponse.json(
+				{error : "Failed to fetch metals data"},
+				{status : 500}
+		);
+	}
 }
