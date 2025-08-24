@@ -53,7 +53,8 @@ Please read and respect the [code of conduct](?tab=coc-ov-file) and process for 
 
 ## 💻 Local Setup
 1. Pull the latest version of `main`
-2. Run the development server:
+2. Ensure that Next.js is installed. If not, install using `npm install next react react-dom`
+3. Run the development server:
 ```bash
 npm run dev
 # or

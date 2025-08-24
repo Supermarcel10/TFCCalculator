@@ -18,7 +18,7 @@
     "@phosphor-icons/react": "^2.1.10",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "next": "15.3.4",
+    "next": "^15.3.4",
     "next-sitemap": "^4.2.3",
     "react": "^18",
     "react-dom": "^18",
