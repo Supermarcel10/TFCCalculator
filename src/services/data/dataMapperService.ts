@@ -162,23 +162,24 @@ export class DataMapperService implements IDataMapperService {
 			const foundMinerals = minerals[mineralName];
 			if (!foundMinerals) {
 				missingMinerals.push(mineralName);
-			} else {
-				// Supply produces mineral for FE compliance
-				const mineralsWithProduces = foundMinerals.map(mineral => ({
-					...mineral,
-					produces : mineralName
-				}));
-				combinedMinerals.set(mineralName, mineralsWithProduces);
+				continue;
 			}
+
+			// Supply produces mineral for FE compliance
+			const mineralsWithProduces = foundMinerals.map(mineral => ({
+				...mineral,
+				produces : mineralName
+			}));
+			combinedMinerals.set(mineralName, mineralsWithProduces);
 		}
 
-		// Fail if missing minerals
+		// Warn on missing minerals
 		if (missingMinerals.length > 0) {
-			const errorMessage = isAlloy
+			const message = isAlloy
 				? `No minerals found for alloy ${output.name} with missing components: ${missingMinerals.join(', ')}`
 				: `No minerals found for metal ${output.name}`;
 
-			throw new DataServiceError(404, errorMessage);
+			console.warn(message);
 		}
 
 		// Add default minerals based on constants
@@ -203,6 +204,19 @@ export class DataMapperService implements IDataMapperService {
 			const existingMinerals = combinedMinerals.get(mineralName) || [];
 			combinedMinerals.set(mineralName, [...existingMinerals, ...defaultMinerals]);
 		}
+
+		// Error on no minerals at all for component
+		for (const mineral in missingMinerals) {
+			if (combinedMinerals.get(mineral)?.length == 0) {
+				const errorMessage = isAlloy
+					? `No minerals found for alloy ${output.name} with missing components: ${missingMinerals.join(', ')}`
+					: `No minerals found for metal ${output.name}`;
+
+				throw new DataServiceError(404, errorMessage);
+			}
+		}
+		// if (mineralDefaults.length == 0 && mineralName in missingMinerals)
+		// 	console.log("Found defaults, so should remove!")
 
 		return combinedMinerals;
 	}
