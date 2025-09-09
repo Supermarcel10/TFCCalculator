@@ -215,8 +215,6 @@ export class DataMapperService implements IDataMapperService {
 				throw new DataServiceError(404, errorMessage);
 			}
 		}
-		// if (mineralDefaults.length == 0 && mineralName in missingMinerals)
-		// 	console.log("Found defaults, so should remove!")
 
 		return combinedMinerals;
 	}
