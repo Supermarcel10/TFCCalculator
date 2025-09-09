@@ -14,6 +14,10 @@ const nextConfig = {
             source : "/:type(modpack|mod)/:name([a-zA-Z]+)/:version([0-9x_.]+)",
             destination : "/:type/:name/:version/metals",
             permanent : true
+        }, {
+            source : "/modpack/terrafirmagreg/1.20.x_0.10.x/:path*",
+            destination : "/modpack/terrafirmagreg/1.20.x_0.10.6%2B/metals",
+            permanent : true
         }]
     }
 }

@@ -29,8 +29,8 @@ export default function Home() {
 		router.push(`/${type}/${id}/${version}/${metal.name}`);
 	}, [router, type, id, version]);
 
-	const versionsSplit = (version as string).split("_", 2);
-	const subheadingString = `${id as string} ${versionsSplit[1]}`;
+	const versionsSplit = decodeURIComponent(version as string).split("_", 2);
+	const subheadingString = `${decodeURIComponent(id as string)} ${versionsSplit[1]}`;
 
 	useEffect(() => {
 		let result = rawResult;
