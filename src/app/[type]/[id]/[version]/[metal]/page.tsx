@@ -12,8 +12,8 @@ export default function MetalPage() {
 
 	const metalString = Array.isArray(metal) ? metal.join(',') : metal;
 
-	const versionsSplit = (version as string).split("_", 2);
-	const subheadingString = `${id as string} ${versionsSplit[1]}`;
+	const versionsSplit = decodeURIComponent(version as string).split("_", 2);
+	const subheadingString = `${decodeURIComponent(id as string)} ${versionsSplit[1]}`;
 
 	return (
 			<main
