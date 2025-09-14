@@ -1,7 +1,201 @@
 {
-  "lastUpdated": "2025-07-19",
+  "lastUpdated": "2025-09-14",
   "version": "1.0.0",
   "schemaVersion": "1",
+  "aluminium_silicate": [
+    {
+      "name": "Raw Kyanite",
+      "yield": 33,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Kyanite",
+      "yield": 45,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Kyanite",
+      "yield": 22,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Kyanite Dust",
+      "yield": 14,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Kyanite Dust",
+      "yield": 33,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Kyanite Dust",
+      "yield": 136,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Mica",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Mica",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Mica",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Mica Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Mica Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Mica Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Pollucite",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Pollucite",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Pollucite",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Pollucite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Pollucite Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Pollucite Dust",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Spodumene",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Spodumene",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Spodumene",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Spodumene Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Spodumene Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Spodumene Dust",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
   "bismuth": [
     {
       "name": "Normal Bismuthinite",
@@ -128,6 +322,116 @@
     {
       "name": "Small Pile of Brass Dust",
       "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "cobalt_brass": [
+    {
+      "name": "Tiny Pile of Cobalt Brass Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Cobalt Brass Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "cobalt": [
+    {
+      "name": "Raw Cobalt",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Cobalt",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Cobalt",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Cobalt Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Cobalt Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "cobaltite": [
+    {
+      "name": "Raw Cobaltite",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Cobaltite",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Cobaltite",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Cobaltite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Cobaltite Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Cobaltite Dust",
+      "yield": 121,
       "uses": [
         "vessel",
         "crucible"
@@ -590,6 +894,16 @@
       ]
     },
     {
+      "name": "Pyrite Powder",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
       "name": "Raw Pyrite",
       "yield": 31,
       "uses": [
@@ -740,7 +1054,7 @@
       ]
     },
     {
-      "name": "Tiny Pile of Yellow Limonite Dust",
+      "name": "Tiny Pile of Limonite Dust",
       "yield": 13,
       "uses": [
         "vessel",
@@ -750,7 +1064,7 @@
       ]
     },
     {
-      "name": "Small Pile of Yellow Limonite Dust",
+      "name": "Small Pile of Limonite Dust",
       "yield": 31,
       "uses": [
         "vessel",
@@ -760,7 +1074,7 @@
       ]
     },
     {
-      "name": "Yellow Limonite Dust",
+      "name": "Limonite Dust",
       "yield": 129,
       "uses": [
         "vessel",
@@ -964,6 +1278,96 @@
         "vessel",
         "crucible",
         "blast_furnace"
+      ]
+    }
+  ],
+  "lead": [
+    {
+      "name": "Raw Lead",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Lead",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Lead",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Lead Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Lead Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Galena",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Galena",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Galena",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Galena Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Galena Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Galena Dust",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
       ]
     }
   ],
