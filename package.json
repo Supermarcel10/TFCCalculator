@@ -1,6 +1,5 @@
 {
-  "name": "tfg-calculator",
-  "version": "0.1.0",
+  "name": "tfc-calculator",
   "private": true,
   "packageManager": "pnpm@10.9.0",
   "scripts": {

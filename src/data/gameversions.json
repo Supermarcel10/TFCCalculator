@@ -3,7 +3,33 @@
     {
       "id": "terrafirmagreg",
       "displayName": "TerraFirmaGreg Modern",
-      "version": "0.10.x",
+      "version": "0.10.6+",
+      "gameVersion": "1.20.x",
+      "constants": {
+        "ingot": 144,
+        "dust": 144,
+        "nugget": 16,
+        "block": 1296
+      },
+      "supported": true
+    },
+    {
+      "id": "terrafirmagreg",
+      "displayName": "TerraFirmaGreg Modern",
+      "version": "0.10.5",
+      "gameVersion": "1.20.x",
+      "constants": {
+        "ingot": 144,
+        "dust": 144,
+        "nugget": 16,
+        "block": 1296
+      },
+      "supported": true
+    },
+    {
+      "id": "terrafirmagreg",
+      "displayName": "TerraFirmaGreg Modern",
+      "version": "0.10.0",
       "gameVersion": "1.20.x",
       "constants": {
         "ingot": 144,
