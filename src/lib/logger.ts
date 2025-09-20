@@ -6,8 +6,7 @@ const logger = winston.createLogger(
 			level : process.env.LOG_LEVEL || "info",
 			format : winston.format.json(),
 			exitOnError : false,
-			defaultMeta : {service : "TFC-Calculator"}
-			// transports : [new winston.transports.Console()]
+			defaultMeta : {service : process.env.SERVICE_NAME}
 		}
 );
 
