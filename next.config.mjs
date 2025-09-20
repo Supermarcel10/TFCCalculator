@@ -1,5 +1,7 @@
+// noinspection JSUnusedGlobalSymbols
+
 /** @type {import("next").NextConfig} */
-const nextConfig = {
+export default {
     devIndicators : false,
     async redirects() {
         return [{
@@ -21,5 +23,3 @@ const nextConfig = {
         }]
     }
 }
-
-export default nextConfig
