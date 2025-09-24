@@ -110,13 +110,12 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	};
 
 	const handleCalculate = async () => {
-		if (!components || !minerals || isCalculating) {
+		if (!components || !minerals || isCalculating || !mbConstants) {
 			return;
 		}
 
 		setIsCalculating(true);
 		setCalculationUnit(unit);
-		await new Promise(resolve => setTimeout(resolve, 0));
 
 		// TODO: Decouple this somehow into a more generic reusable method of some form?
 		const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
@@ -131,7 +130,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		}
 		// END TODO
 
-		if (mbConstants == null) return;
 		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
 
 		const result = calculationService.calculateSmeltingOutput(desiredOutputInMb, components, mineralWithQuantities);
