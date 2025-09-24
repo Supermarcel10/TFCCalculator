@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {CaretCircleLeftIcon} from "@phosphor-icons/react";
 import {useRouter} from "next/navigation";
 
@@ -33,7 +33,7 @@ export function HeadingWithBackButton(
 
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
-	}, []);
+	});
 
 	const previousScreenName = ariaPreviousScreenName ? `to ${ariaPreviousScreenName}` : "";
 	const ariaLabel = `Return ${previousScreenName}`;
