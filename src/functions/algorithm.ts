@@ -163,6 +163,62 @@ function totalAvailableForComponent(component: string, invByComponent: Map<strin
 	return total;
 }
 
+/**
+ * Detemine if flag for CLOSEST_ALTERNATIVE is on.
+ */
+function isFlagOn(flags: Flags | undefined, flag: Flags): boolean {
+  return (flags ?? 0) & flag ? true : false;
+}
+
+/**
+ * @param targetMb Target total output in mB to evaluate requirements against.
+ * @param normalizedComponents List of normalized components with their minPct windows.
+ * @param normalizedInv Inventory map keyed by normalized component name, each to an array
+ *   of minerals, where each mineral contributes yield*quantity mB.
+ * @returns An array of bottleneck records. Empty if all components meet their minimums.
+ */
+function computeBottlenecks(
+  targetMb: number,
+  normalizedComponents: NormalizedComponent[],
+  normalizedInv: Map<string, QuantifiedMineral[]>
+): Array<{ component: string; needMb: number; haveMb: number; shortfallMb: number }> {
+  const out: Array<{ component: string; needMb: number; haveMb: number; shortfallMb: number }> = [];
+  for (const { component, minPct } of normalizedComponents) {
+    const needMb = Math.ceil((minPct / 100) * targetMb);
+    const haveMb = totalAvailableForComponent(component, normalizedInv);
+    if (haveMb < needMb) out.push({ component, needMb, haveMb, shortfallMb: needMb - haveMb });
+  }
+  return out;
+}
+
+/** Try to solve exactly amountMb using existing DP/DFS; return minerals or null. */
+function trySolveExact(
+  amountMb: number,
+  normalizedComponents: NormalizedComponent[],
+  normalizedInv: Map<string, QuantifiedMineral[]>
+): QuantifiedMineral[] | null {
+  const plans = buildAllComponentDP(amountMb, normalizedComponents, normalizedInv);
+  if (!plans) return null;
+
+  const sumMin = plans.reduce((s, p) => s + p.minMb, 0);
+  const sumMax = plans.reduce((s, p) => s + p.maxMb, 0);
+  if (sumMin > amountMb || sumMax < amountMb) return null;
+
+  const chosen = pickOneSumPerComponent(plans, amountMb);
+  if (!chosen) return null;
+
+  const byName = new Map<string, QuantifiedMineral>();
+  for (const plan of plans) {
+    const sumChosen = chosen.get(plan.component)!;
+    for (const qm of reconstructMinerals(plan.dp, sumChosen)) {
+      const existing = byName.get(qm.name);
+      if (existing) existing.quantity += qm.quantity;
+      else byName.set(qm.name, { ...qm });
+    }
+  }
+  return Array.from(byName.values());
+}
+
 /*----------------------- Binary decomposition (chunks) -----------------------*/
 
 type Chunk = {
@@ -388,60 +444,62 @@ type NormalizedComponent = {
 	maxPct: number;
 };
 
-/** Exit algorithm early where possible to avoid unnecessary work */
 function earlyFeasibilityChecks(
-	targetMb: number,
-	normalizedComponents: NormalizedComponent[],
-	normalizedInv: Map<string, QuantifiedMineral[]>,
-	_flags?: Flags, // currently unused
-	_flagValues?: FlagValues // currently unused
+  targetMb: number,
+  normalizedComponents: NormalizedComponent[],
+  normalizedInv: Map<string, QuantifiedMineral[]>,
+  flags?: Flags,
+  _flagValues?: FlagValues
 ): CalculationOutput | null {
-	// Screen for bad inputs
-	if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
-		return {
-			status: OutputCode.BAD_REQUEST,
-			amountMb: 0,
-			usedMinerals: [],
-			statusContext: "targetMb must be a positive integer",
-		};
-	}
-	if (!normalizedComponents?.length) {
-		return { 
-			status: OutputCode.BAD_REQUEST, 
-			amountMb: 0, 
-			usedMinerals: [], 
-			statusContext: "components are required" };
-	}
+  const closestOn = isFlagOn(flags, Flags.CLOSEST_ALTERNATIVE);
 
-	// Total available mB must be >= targetMb
-	let totalAvailableFromRecipe = 0;
-	for (const { component } of normalizedComponents) {
-		totalAvailableFromRecipe += totalAvailableForComponent(component, normalizedInv);
-	}
-	if (totalAvailableFromRecipe < targetMb) {
-		return {
-			status: OutputCode.INSUFFICIENT_TOTAL_MB,
-			statusContext: "Not enough total material available",
-			amountMb: 0,
-			usedMinerals: [],
-		};
-	}
+  // Bad inputs are always errors
+  if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
+    return {
+      status: OutputCode.BAD_REQUEST,
+      amountMb: 0,
+      usedMinerals: [],
+      statusContext: "targetMb must be a positive integer",
+    };
+  }
+  if (!normalizedComponents?.length) {
+    return {
+      status: OutputCode.BAD_REQUEST,
+      amountMb: 0,
+      usedMinerals: [],
+      statusContext: "components are required",
+    };
+  }
 
-	// Total available mB for each Component must be >= minPct
-	for (const { component, minPct } of normalizedComponents) {
-		const minMb = Math.ceil((minPct / 100) * targetMb);
-		const available = totalAvailableForComponent(component, normalizedInv);
-		if (available < minMb) {
-			return {
-				status: OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-				statusContext: `Not enough ${component} for minimum requirement`,
-				amountMb: 0,
-				usedMinerals: [],
-			};
-		}
-	}
+  // When CLOSEST_ALTERNATIVE is ON, we don't fail early for "insufficient for the target",
+  // because a smaller amount might still be feasible. We keep these as prunable hints only
+  let totalAvailableFromRecipe = 0;
+  for (const { component } of normalizedComponents) {
+    totalAvailableFromRecipe += totalAvailableForComponent(component, normalizedInv);
+  }
+  if (!closestOn && totalAvailableFromRecipe < targetMb) {
+    return {
+      status: OutputCode.INSUFFICIENT_TOTAL_MB,
+      statusContext: "Not enough total material available",
+      amountMb: 0,
+      usedMinerals: [],
+    };
+  }
 
-	return null; // early checks passed
+  for (const { component, minPct } of normalizedComponents) {
+    const minMb = Math.ceil((minPct / 100) * targetMb);
+    const available = totalAvailableForComponent(component, normalizedInv);
+    if (!closestOn && available < minMb) {
+      return {
+        status: OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
+        statusContext: `Not enough ${component} for minimum requirement`,
+        amountMb: 0,
+        usedMinerals: [],
+      };
+    }
+  }
+
+  return null; // proceed
 }
 
 /** Build DP tables (including candidate lists) for all components */
@@ -497,76 +555,98 @@ function buildAllComponentDP(
 }
 
 export function calculateSmeltingOutput(
-	targetMb: number,
-	components: SmeltingComponent[],
-	availableMinerals: Map<string, QuantifiedMineral[]>,
-	_flags?: Flags, // currently unused
-	_flagValues?: FlagValues // currently unused
+  targetMb: number,
+  components: SmeltingComponent[],
+  availableMinerals: Map<string, QuantifiedMineral[]>,
+  flags?: Flags,
+  flagValues?: FlagValues
 ): CalculationOutput {
-	// Normalize component keys for lookups
-	const normalizedComponents = components.map((c) => ({
-		component: normalize(c.mineral),
-		minPct: c.min,
-		maxPct: c.max,
-	}));
+  // Normalize inputs
+  const normalizedComponents = components.map((c) => ({
+    component: normalize(c.mineral),
+    minPct: c.min,
+    maxPct: c.max,
+  }));
+  const normalizedInv = normalizeInvMap(availableMinerals);
 
-	// Normalize inventory keys and combine entries with the same normalized key
-	const normalizedInv = normalizeInvMap(availableMinerals);
+  // Early feasibility checks
+  const earlyResult = earlyFeasibilityChecks(targetMb, normalizedComponents, normalizedInv, flags, flagValues);
+  if (earlyResult) return earlyResult;
 
-	const earlyResult = earlyFeasibilityChecks(targetMb, normalizedComponents, normalizedInv, _flags, _flagValues);
-	if (earlyResult) return earlyResult;
+  // Try exact target first
+  const exactMinerals = trySolveExact(targetMb, normalizedComponents, normalizedInv);
+  if (exactMinerals) {
+    return { status: OutputCode.SUCCESS, amountMb: targetMb, usedMinerals: exactMinerals };
+  }
 
-	// Build DP tables (including candidate lists) for all components
-	const plans = buildAllComponentDP(targetMb, normalizedComponents, normalizedInv);
-	if (!plans) {
-		return {
-			status: OutputCode.UNFEASIBLE,
-			statusContext: "Could not find valid combination of materials",
-			amountMb: 0,
-			usedMinerals: [],
-		};
-	}
+  // If CLOSEST_ALTERNATIVE is enabled, step down in intervalMb to find best feasible amount
+  const closestOn = isFlagOn(flags, Flags.CLOSEST_ALTERNATIVE);
+  if (closestOn) {
+    const intervalMb = flagValues?.intervalMb ?? 0;
+    if (!Number.isInteger(intervalMb) || intervalMb <= 0) {
+      return {
+        status: OutputCode.BAD_REQUEST,
+        amountMb: 0,
+        usedMinerals: [],
+        statusContext: 
+		"intervalMb must be provided as a positive integer when CLOSEST_ALTERNATIVE is set",
+      };
+    }
 
-	// Global window sanity check
-	const sumMin = plans.reduce((s, p) => s + p.minMb, 0);
-	const sumMax = plans.reduce((s, p) => s + p.maxMb, 0);
-	if (sumMin > targetMb || sumMax < targetMb) {
-		return {
-			status: OutputCode.UNFEASIBLE,
-			statusContext: "Could not find valid combination of materials",
-			amountMb: 0,
-			usedMinerals: [],
-		};
-	}
+    // Upper bound by what's actually available, rounded to the interval
+    let totalAvailableFromRecipe = 0;
+    for (const { component } of normalizedComponents) {
+      totalAvailableFromRecipe += totalAvailableForComponent(component, normalizedInv);
+    }
+    const start = Math.min(targetMb, Math.floor(totalAvailableFromRecipe / intervalMb) * intervalMb);
 
-	// Cross-component DFS to pick one candidate per component
-	const chosen = pickOneSumPerComponent(plans, targetMb);
-	if (!chosen) {
-		return {
-			status: OutputCode.UNFEASIBLE,
-			statusContext: "Could not find valid combination of materials",
-			amountMb: 0,
-			usedMinerals: [],
-		};
-	}
+    // If nothing even at one interval, fail with a helpful message
+    if (start <= 0) {
+      const b = computeBottlenecks(targetMb, normalizedComponents, normalizedInv);
+      const ctx = b.length
+        ? `No valid combination. Bottlenecks at ${targetMb}mB: ` +
+          b.map(x => `${x.component} short by ${x.shortfallMb}mB (need ${x.needMb}, have ${x.haveMb})`).join("; ")
+        : "No valid combination for any amount.";
+      return { status: OutputCode.UNFEASIBLE, amountMb: 0, usedMinerals: [], statusContext: ctx };
+    }
 
-	// Reconstruction: turn chosen per-component sums into minerals, aggregated by name
-	const byName = new Map<string, QuantifiedMineral>();
-	for (const plan of plans) {
-		const sumChosen = chosen.get(plan.component)!;
-		for (const qm of reconstructMinerals(plan.dp, sumChosen)) {
-			// Merge same minerals (by name) across components (usually unnecessary, but tidy)
-			const existing = byName.get(qm.name);
-			if (existing) existing.quantity += qm.quantity;
-			else byName.set(qm.name, { ...qm });
-		}
-	}
+    // Walk downward in interval-sized steps until we find a feasible exact combination
+    for (let candidate = start; candidate >= intervalMb; candidate -= intervalMb) {
+      // quick prune: per-component mins for this candidate
+      let ok = true;
+      for (const { component, minPct } of normalizedComponents) {
+        const need = Math.ceil((minPct / 100) * candidate);
+        if (totalAvailableForComponent(component, normalizedInv) < need) { ok = false; break; }
+      }
+      if (!ok) continue;
 
-	return {
-		status: OutputCode.SUCCESS,
-		amountMb: targetMb,
-		usedMinerals: Array.from(byName.values()),
-	};
+      const minerals = trySolveExact(candidate, normalizedComponents, normalizedInv);
+      if (minerals) {
+        return {
+          status: OutputCode.SUCCESS,
+          amountMb: candidate,
+          usedMinerals: minerals,
+          statusContext: candidate === targetMb ? undefined : "closest_alternative",
+        };
+      }
+    }
+
+    // Still nothing—give diagnostics at target
+    const b = computeBottlenecks(targetMb, normalizedComponents, normalizedInv);
+    const ctx = b.length
+      ? `No valid combination. Bottlenecks at ${targetMb}mB: ` +
+        b.map(x => `${x.component} short by ${x.shortfallMb}mB (need ${x.needMb}, have ${x.haveMb})`).join("; ")
+      : "Could not find valid combination of materials";
+    return { status: OutputCode.UNFEASIBLE, amountMb: 0, usedMinerals: [], statusContext: ctx };
+  }
+
+  // 3) Flag not set -> keep existing failure behavior
+  return {
+    status: OutputCode.UNFEASIBLE,
+    statusContext: "Could not find valid combination of materials",
+    amountMb: 0,
+    usedMinerals: [],
+  };
 }
 
 export class OutputCalculator implements IOutputCalculator {
