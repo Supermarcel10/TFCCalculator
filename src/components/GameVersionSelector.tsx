@@ -100,13 +100,13 @@ export function GameVersionSelector() {
 	const currentVersion = selectedDisplayName ? currentItems[selectedDisplayName] : [];
 
 	return (
-		<div className="container mx-auto px-4 py-8">
+		<div className="container mx-auto px-4 py-1">
 			<div className="flex flex-col items-center gap-4 max-w-2xl mx-auto">
 				<div className="flex flex-col sm:flex-row justify-center w-full gap-4">
 					<select
 						value={selectedType}
 						onChange={handleTypeChange}
-						className="w-full sm:w-32 p-2 rounded border border-teal-500 bg-black text-teal-100"
+						className="w-full sm:w-1/4 p-2 rounded border border-teal-500 bg-black text-teal-100"
 						aria-label="Select type"
 					>
 						<option value="modpack">Modpack</option>
@@ -116,7 +116,7 @@ export function GameVersionSelector() {
 					<select
 						value={selectedDisplayName ?? ""}
 						onChange={handleBaseGameVersionChange}
-						className="w-full p-2 rounded border border-teal-500 bg-black text-teal-100"
+						className="w-full sm:w-1/2 p-2 rounded border border-teal-500 bg-black text-teal-100"
 						aria-label="Select modpack/mod"
 					>
 						{Object.keys(currentItems).map((displayName) => (
@@ -129,7 +129,7 @@ export function GameVersionSelector() {
 					<select
 						value={selectedVersion ?? ""}
 						onChange={handleVersionChange}
-						className="w-full p-2 rounded border border-teal-500 bg-black text-teal-100"
+						className="w-full sm:w-1/4 p-3 rounded border border-teal-500 bg-black text-teal-100"
 						aria-label="Select version"
 					>
 						{currentVersion.map((baseGameVersion) => (
@@ -143,10 +143,10 @@ export function GameVersionSelector() {
 				<button
 					onClick={handleCalculate}
 					disabled={!selectedType || !selectedDisplayName || !selectedVersion}
-					className="w-full sm:w-auto px-6 py-2 rounded primary"
+					className="w-full sm:w-auto px-14 py-3 my-4 rounded primary"
 					aria-label="Go to calculator"
 				>
-					Calculate
+					Start
 				</button>
 			</div>
 		</div>
