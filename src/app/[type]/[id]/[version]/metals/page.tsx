@@ -1,4 +1,4 @@
-// src/app/[type]/[id]/[version]/metals/page.tsx
+
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import type { SmeltingOutput } from "@/types";
@@ -11,10 +11,8 @@ type Props = {
 export default async function Page({ params }: Props) {
 	const { type, id, version } = await params;
 
-	// Decodificar versión porque Next encodea "+" como %252B
 	const safeVersion = decodeURIComponent(version);
 
-	// Detectar host dinámicamente
 	const headersList = await headers();
 	const host = headersList.get("host") ?? "localhost:3000";
 	const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
