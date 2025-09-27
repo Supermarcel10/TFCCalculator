@@ -1,45 +1,5 @@
-import type {QuantifiedMineral, SmeltingComponent} from "@/types"
+import type {SmeltingComponent} from "@/types";
 
-
-/**
- * Builder for QuantifiedInputMineral
- *
- * calculateSmeltingOutput() expects a Map<string, QuantifiedMineral[]>
- * and each QuantifiedMineral has { name, produces, yield, quantity, uses? }
- * Writing this by hand in every test is inefficient, so use a builder
- * with "produces" normalized to lowercase
- * and "uses" defaulting to a harmless array
- */
-export function create_quantified_mineral(
-  name: string,
-  produces: string,
-  yieldUnits: number,
-  quantity: number
-): QuantifiedMineral {
-  return {
-    name,
-    produces: produces.trim().toLowerCase(),
-    yield: yieldUnits,
-    quantity,
-    // If QuantifiedMineral['uses'] is a specific union elsewhere, this remains safe in tests.
-    uses: ['vessel', 'crucible'] as any,
-  };
-}
-
-/**
- * Builder for the Map<string, QuantifiedMineral[]>
- *
- * calculateSmeltingOutput(target, components, availableMinerals) expects a Map
- * This helper takes an array of tuples and returns that Map,
- * lowercasing the keys to avoid mismatches
- */
-export function byTypeMap(
-  entries: Array<[type: string, items: QuantifiedMineral[]]>
-): Map<string, QuantifiedMineral[]> {
-  const m = new Map<string, QuantifiedMineral[]>();
-  for (const [type, arr] of entries) m.set(type.toLowerCase(), arr);
-  return m;
-}
 
 /**
  * Reusable percent window for bronze
