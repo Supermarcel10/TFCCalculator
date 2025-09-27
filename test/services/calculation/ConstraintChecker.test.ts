@@ -5,8 +5,8 @@ import {smeltingComponentArrayFixture} from "@test/fixtures/smeltingComponentFix
 import {availableMineralsFixture} from "@test/fixtures/availableMineralFixture";
 import {faker} from "@faker-js/faker";
 import {SmeltingComponent} from "@/types";
-import {bronzeComponents} from "@test/services/calculation/helpers";
-import {AvailableMineralBuilder} from "@test/services/calculation/availableMineralBuilder";
+import {bronzeComponents} from "@test/helpers/reusableFixtureData";
+import {AvailableMineralBuilder} from "@test/helpers/availableMineralBuilder";
 
 
 let sut : IConstraintChecker;

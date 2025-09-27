@@ -1,18 +1,3 @@
-import type {SmeltingComponent} from "@/types";
-
-
-/**
- * Reusable percent window for bronze
- *
- * Many tests use the same component constraints
- */
-export function bronzeComponents(): SmeltingComponent[] {
-  return [
-    { mineral: 'copper', min: 88, max: 92 },
-    { mineral: 'tin',    min:  8, max: 12 },
-  ];
-}
-
 /**
  * Computes the total output in mB from a set of used minerals.
  * 
