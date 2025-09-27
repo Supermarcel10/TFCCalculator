@@ -1,13 +1,14 @@
-import {OutputCalculator, OutputCode}                                   from "@/functions/algorithm"
+import {ICalculationService, OutputCode}                                from "@/services/calculation/abstract/ICalculationService"
+import {CalculationService}                                             from "@/services/calculation/CalculationService"
 import {SmeltingComponent}                                              from "@/types"
 import {bronzeComponents, byTypeMap, create_quantified_mineral, timeIt} from "./helpers"
 
 
 const bronze: SmeltingComponent[] = bronzeComponents();
-let sut: OutputCalculator;
+let sut : ICalculationService
 
 beforeAll(() => {
-  sut = new OutputCalculator();
+  sut = new CalculationService()
 });
 
 describe('OutputCalculator - smoke & micro-bench', () => {
