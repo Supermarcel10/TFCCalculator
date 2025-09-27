@@ -1,4 +1,5 @@
-import type { QuantifiedMineral, SmeltingComponent } from '@/types';
+import type {QuantifiedMineral, SmeltingComponent} from "@/types"
+
 
 /**
  * Builder for QuantifiedInputMineral

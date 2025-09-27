@@ -1,6 +1,7 @@
-import { OutputCalculator, OutputCode } from '@/functions/algorithm';
-import { SmeltingComponent } from '@/types';
-import { create_quantified_mineral, byTypeMap, bronzeComponents, timeIt } from './helpers';
+import {OutputCalculator, OutputCode}                                   from "@/functions/algorithm"
+import {SmeltingComponent}                                              from "@/types"
+import {bronzeComponents, byTypeMap, create_quantified_mineral, timeIt} from "./helpers"
+
 
 const bronze: SmeltingComponent[] = bronzeComponents();
 let sut: OutputCalculator;
