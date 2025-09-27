@@ -6,6 +6,7 @@ import {availableMineralsFixture} from "@test/fixtures/availableMineralFixture";
 import {faker} from "@faker-js/faker";
 import {SmeltingComponent} from "@/types";
 import {bronzeComponents} from "@test/services/calculation/helpers";
+import {AvailableMineralBuilder} from "@test/services/calculation/availableMineralBuilder";
 
 
 let sut : IConstraintChecker;
@@ -114,8 +115,11 @@ describe("checkEntryConstraints", () => {
 		// arrange
 		const targetMb = 144;
 		const components : SmeltingComponent[] = bronzeComponents();
-		// TODO: FIXME!
-		const availableMinerals = availableMineralsFixture(1, 1);
+		const availableMinerals = AvailableMineralBuilder
+				.create()
+				.add("copper", 10, 10)
+				.add("tin", 10, 10)
+				.build();
 
 		// act
 		const result = sut.checkEntryConstraints(
@@ -126,26 +130,27 @@ describe("checkEntryConstraints", () => {
 
 		// assert
 		expect(result.status).toBe(OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB);
-		expect(result.statusContext).toBe("Not enough ${mineral} for minimum requirement");
+		expect(result.statusContext).toBe("Not enough copper for minimum requirement");
 	});
 
-	// TODO: Complete me
-	// it("should return SUCCESS, when all conditions are satisfied", () => {
-	// 	// arrange
-	// 	const targetMb = 1000;
-	//
-	// 	const fixtureComponents : SmeltingComponent[] = smeltingComponentArrayFixture(1);
-	// 	const fixtureAvailableMinerals = availableMineralsFixture(1, 1);
-	//
-	// 	// act
-	// 	const result = sut.checkEntryConstraints(
-	// 			targetMb,
-	// 			fixtureComponents,
-	// 			fixtureAvailableMinerals
-	// 	);
-	//
-	// 	// assert
-	// 	expect(result.status).toBe(OutputCode.INSUFFICIENT_TOTAL_MB);
-	// 	expect(result.statusContext).toBe("Not enough total material available");
-	// });
+	it("should return SUCCESS, when all conditions are satisfied", () => {
+		// arrange
+		const targetMb = 144;
+		const components : SmeltingComponent[] = bronzeComponents();
+		const availableMinerals = AvailableMineralBuilder
+				.create()
+				.add("copper", 20, 10)
+				.add("tin", 20, 10)
+				.build();
+
+		// act
+		const result = sut.checkEntryConstraints(
+				targetMb,
+				components,
+				availableMinerals
+		);
+
+		// assert
+		expect(result.status).toBe(OutputCode.SUCCESS);
+	});
 });
