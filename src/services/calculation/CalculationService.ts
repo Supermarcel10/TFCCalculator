@@ -418,84 +418,6 @@ function buildAllComponentDP(
 	return plans;
 }
 
-export function calculateSmeltingOutput(
-		targetMb : number,
-		components : SmeltingComponent[],
-		availableMinerals : Map<string, QuantifiedMineral[]>,
-		_flags? : Flags, // currently unused
-		_flagValues? : FlagValues // currently unused
-) : CalculationOutput {
-	// Normalize component keys for lookups
-	const normalizedComponents = components.map((c) => ({
-		component : normalize(c.mineral),
-		minPct : c.min,
-		maxPct : c.max
-	}));
-
-	// Normalize inventory keys and combine entries with the same normalized key
-	const normalizedInv = normalizeInvMap(availableMinerals);
-
-	const earlyResult = earlyFeasibilityChecks(targetMb, normalizedComponents, normalizedInv, _flags, _flagValues);
-	if (earlyResult) {
-		return earlyResult;
-	}
-
-	// Build DP tables (including candidate lists) for all components
-	const plans = buildAllComponentDP(targetMb, normalizedComponents, normalizedInv);
-	if (!plans) {
-		return {
-			status : OutputCode.UNFEASIBLE,
-			statusContext : "Could not find valid combination of materials",
-			amountMb : 0,
-			usedMinerals : []
-		};
-	}
-
-	// Global window sanity check
-	const sumMin = plans.reduce((s, p) => s + p.minMb, 0);
-	const sumMax = plans.reduce((s, p) => s + p.maxMb, 0);
-	if (sumMin > targetMb || sumMax < targetMb) {
-		return {
-			status : OutputCode.UNFEASIBLE,
-			statusContext : "Could not find valid combination of materials",
-			amountMb : 0,
-			usedMinerals : []
-		};
-	}
-
-	// Cross-component DFS to pick one candidate per component
-	const chosen = pickOneSumPerComponent(plans, targetMb);
-	if (!chosen) {
-		return {
-			status : OutputCode.UNFEASIBLE,
-			statusContext : "Could not find valid combination of materials",
-			amountMb : 0,
-			usedMinerals : []
-		};
-	}
-
-	// Reconstruction: turn chosen per-component sums into minerals, aggregated by name
-	const byName = new Map<string, QuantifiedMineral>();
-	for (const plan of plans) {
-		const sumChosen = chosen.get(plan.component)!;
-		for (const qm of reconstructMinerals(plan.dp, sumChosen)) {
-			// Merge same minerals (by name) across components (usually unnecessary, but tidy)
-			const existing = byName.get(qm.name);
-			if (existing) {
-				existing.quantity += qm.quantity;
-			} else {
-				byName.set(qm.name, {...qm});
-			}
-		}
-	}
-
-	return {
-		status : OutputCode.SUCCESS,
-		amountMb : targetMb,
-		usedMinerals : Array.from(byName.values())
-	};
-}
-
 export class CalculationService implements ICalculationService {
 	calculateSmeltingOutput(
 			targetMb : number,
@@ -504,6 +426,74 @@ export class CalculationService implements ICalculationService {
 			flags? : Flags,
 			flagValues? : FlagValues,
 	) : CalculationOutput {
-		return calculateSmeltingOutput(targetMb, components, availableMinerals, flags, flagValues);
+		// Normalize component keys for lookups
+		const normalizedComponents = components.map((c) => ({
+			component : normalize(c.mineral),
+			minPct : c.min,
+			maxPct : c.max
+		}));
+
+		// Normalize inventory keys and combine entries with the same normalized key
+		const normalizedInv = normalizeInvMap(availableMinerals);
+
+		const earlyResult = earlyFeasibilityChecks(targetMb, normalizedComponents, normalizedInv, flags, flagValues);
+		if (earlyResult) {
+			return earlyResult;
+		}
+
+		// Build DP tables (including candidate lists) for all components
+		const plans = buildAllComponentDP(targetMb, normalizedComponents, normalizedInv);
+		if (!plans) {
+			return {
+				status : OutputCode.UNFEASIBLE,
+				statusContext : "Could not find valid combination of materials",
+				amountMb : 0,
+				usedMinerals : []
+			};
+		}
+
+		// Global window sanity check
+		const sumMin = plans.reduce((s, p) => s + p.minMb, 0);
+		const sumMax = plans.reduce((s, p) => s + p.maxMb, 0);
+		if (sumMin > targetMb || sumMax < targetMb) {
+			return {
+				status : OutputCode.UNFEASIBLE,
+				statusContext : "Could not find valid combination of materials",
+				amountMb : 0,
+				usedMinerals : []
+			};
+		}
+
+		// Cross-component DFS to pick one candidate per component
+		const chosen = pickOneSumPerComponent(plans, targetMb);
+		if (!chosen) {
+			return {
+				status : OutputCode.UNFEASIBLE,
+				statusContext : "Could not find valid combination of materials",
+				amountMb : 0,
+				usedMinerals : []
+			};
+		}
+
+		// Reconstruction: turn chosen per-component sums into minerals, aggregated by name
+		const byName = new Map<string, QuantifiedMineral>();
+		for (const plan of plans) {
+			const sumChosen = chosen.get(plan.component)!;
+			for (const qm of reconstructMinerals(plan.dp, sumChosen)) {
+				// Merge same minerals (by name) across components (usually unnecessary, but tidy)
+				const existing = byName.get(qm.name);
+				if (existing) {
+					existing.quantity += qm.quantity;
+				} else {
+					byName.set(qm.name, {...qm});
+				}
+			}
+		}
+
+		return {
+			status : OutputCode.SUCCESS,
+			amountMb : targetMb,
+			usedMinerals : Array.from(byName.values())
+		};
 	}
 }
