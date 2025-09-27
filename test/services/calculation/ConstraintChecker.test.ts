@@ -97,7 +97,7 @@ describe("checkEntryConstraints", () => {
 		const targetMb = 1000;
 
 		const fixtureComponents : SmeltingComponent[] = smeltingComponentArrayFixture(1);
-		const fixtureAvailableMinerals = availableMineralsFixture(1, 1);
+		const fixtureAvailableMinerals = availableMineralsFixture(0, 0);
 
 		// act
 		const result = sut.checkEntryConstraints(
