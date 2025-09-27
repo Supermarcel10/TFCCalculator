@@ -1,4 +1,5 @@
 import {MineralUseCase, QuantifiedMineral} from "@/types";
+import {quantifiedMineralArrayFixture} from "@test/fixtures/mineralFixture";
 
 
 export class AvailableMineralBuilder {
@@ -14,6 +15,11 @@ export class AvailableMineralBuilder {
 		};
 
 		return this.addType(mineralType, [quantifiedMineral]);
+	}
+
+	addNoise(amount : number = 50) : this {
+		const minerals : QuantifiedMineral[] = quantifiedMineralArrayFixture(amount);
+		return this.addType("noise", minerals);
 	}
 
 	build() {
