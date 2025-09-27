@@ -1,6 +1,7 @@
 import {QuantifiedMineral, SmeltingComponent} from "@/types";
 import {CalculationResult, Flags, FlagValues, ICalculationService, OutputCode} from "@/services/calculation/abstract/ICalculationService";
 import {IConstraintChecker} from "./abstract/IConstraintChecker";
+import {IStrategySelector} from "@/services/calculation/abstract/IStrategySelector";
 
 
 /* ------------------------------ Utilities ------------------------------ */
@@ -325,9 +326,14 @@ function buildAllComponentDP(
 
 export class CalculationService implements ICalculationService {
 	private constraintChecker : IConstraintChecker;
+	private strategySelector : IStrategySelector;
 
-	constructor(constraintChecker : IConstraintChecker) {
+	constructor(
+			constraintChecker : IConstraintChecker,
+			strategySelector : IStrategySelector
+	) {
 		this.constraintChecker = constraintChecker;
+		this.strategySelector = strategySelector;
 	}
 
 	calculateSmeltingOutput(
@@ -360,10 +366,21 @@ export class CalculationService implements ICalculationService {
 				availableMinerals
 		);
 
-		if (constraintResult) {
+		if (constraintResult.status !== OutputCode.SUCCESS) {
 			return {
 				status : constraintResult.status,
 				statusContext : constraintResult.statusContext,
+				amountMb : 0,
+				usedMinerals : []
+			};
+		}
+
+		const strategyResult = this.strategySelector.validateFlags(flags, flagValues);
+
+		if (strategyResult.status !== OutputCode.SUCCESS) {
+			return {
+				status : strategyResult.status,
+				statusContext : strategyResult.statusContext,
 				amountMb : 0,
 				usedMinerals : []
 			};
