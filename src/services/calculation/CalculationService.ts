@@ -298,20 +298,13 @@ function getMax(arr : number[]) : number {
 	return arr.length ? arr[arr.length - 1] : 0;
 }
 
-/* --------------------------------- Public API -------------------------------- */
-type NormalizedComponent = {
-	component : string; // normalized component name
-	minPct : number;
-	maxPct : number;
-};
-
 /** Exit algorithm early where possible to avoid unnecessary work */
 function earlyFeasibilityChecks(
 		targetMb : number,
-		normalizedComponents : NormalizedComponent[],
+		normalizedComponents : SmeltingComponent[],
 		normalizedInv : Map<string, QuantifiedMineral[]>,
-		_flags? : Flags, // currently unused
-		_flagValues? : FlagValues // currently unused
+		_flags? : Flags,
+		_flagValues? : FlagValues
 ) : CalculationResult | null {
 	// Screen for bad inputs
 	if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
@@ -333,8 +326,8 @@ function earlyFeasibilityChecks(
 
 	// Total available mB must be >= targetMb
 	let totalAvailableFromRecipe = 0;
-	for (const {component} of normalizedComponents) {
-		totalAvailableFromRecipe += totalAvailableForComponent(component, normalizedInv);
+	for (const {mineral} of normalizedComponents) {
+		totalAvailableFromRecipe += totalAvailableForComponent(mineral, normalizedInv);
 	}
 	if (totalAvailableFromRecipe < targetMb) {
 		return {
@@ -346,13 +339,13 @@ function earlyFeasibilityChecks(
 	}
 
 	// Total available mB for each Component must be >= minPct
-	for (const {component, minPct} of normalizedComponents) {
-		const minMb = Math.ceil((minPct / 100) * targetMb);
-		const available = totalAvailableForComponent(component, normalizedInv);
+	for (const {mineral, min} of normalizedComponents) {
+		const minMb = Math.ceil((min / 100) * targetMb);
+		const available = totalAvailableForComponent(mineral, normalizedInv);
 		if (available < minMb) {
 			return {
 				status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-				statusContext : `Not enough ${component} for minimum requirement`,
+				statusContext : `Not enough ${mineral} for minimum requirement`,
 				amountMb : 0,
 				usedMinerals : []
 			};
@@ -365,18 +358,18 @@ function earlyFeasibilityChecks(
 /** Build DP tables (including candidate lists) for all components */
 function buildAllComponentDP(
 		targetMb : number,
-		normalizedComponents : NormalizedComponent[],
+		normalizedComponents : SmeltingComponent[],
 		normalizedInv : Map<string, QuantifiedMineral[]>
 ) : PerComponentPlan[] | null {
 	// Build per-component DP + candidate lists
 	const plans : PerComponentPlan[] = [];
 
-	for (const {component, minPct, maxPct} of normalizedComponents) {
-		const inv : QuantifiedMineral[] = normalizedInv.get(component) ?? [];
+	for (const {mineral, min, max} of normalizedComponents) {
+		const inv : QuantifiedMineral[] = normalizedInv.get(mineral) ?? [];
 
 		const availableMb = inv.reduce((s, u) => s + u.yield * u.quantity, 0);
-		const minMb = Math.ceil((minPct / 100) * targetMb);
-		const maxMb = Math.floor((maxPct / 100) * targetMb);
+		const minMb = Math.ceil((min / 100) * targetMb);
+		const maxMb = Math.floor((max / 100) * targetMb);
 
 		// DP cap: set max mB we need to consider for this component
 		const cap = Math.max(
@@ -384,7 +377,7 @@ function buildAllComponentDP(
 				Math.min(availableMb, maxMb)
 		);
 
-		const dp = buildComponentDP(component, inv, cap);
+		const dp = buildComponentDP(mineral, inv, cap);
 
 		// Build list of in-window candidates from reachable[]
 		const candidates : number[] = [];
@@ -408,7 +401,7 @@ function buildAllComponentDP(
 		const dedup = [...new Set(candidates)];
 
 		plans.push({
-			           component,
+			           component : mineral,
 			           minMb,
 			           maxMb,
 			           dp,
@@ -426,23 +419,25 @@ export class CalculationService implements ICalculationService {
 			flags? : Flags,
 			flagValues? : FlagValues,
 	) : CalculationResult {
-		// Normalize component keys for lookups
-		const normalizedComponents = components.map((c) => ({
-			component : normalize(c.mineral),
-			minPct : c.min,
-			maxPct : c.max
-		}));
+		// TODO: Figure if normalization is necessary, if so split
+		// // Normalize component keys for lookups
+		// const normalizedComponents = components.map((c) => ({
+		// 	component : normalize(c.mineral),
+		// 	minPct : c.min,
+		// 	maxPct : c.max
+		// }));
+		//
+		// // Normalize inventory keys and combine entries with the same normalized key
+		// const normalizedInv = normalizeInvMap(availableMinerals);
+		// END TODO
 
-		// Normalize inventory keys and combine entries with the same normalized key
-		const normalizedInv = normalizeInvMap(availableMinerals);
-
-		const earlyResult = earlyFeasibilityChecks(targetMb, normalizedComponents, normalizedInv, flags, flagValues);
+		const earlyResult = earlyFeasibilityChecks(targetMb, components, availableMinerals, flags, flagValues);
 		if (earlyResult) {
 			return earlyResult;
 		}
 
 		// Build DP tables (including candidate lists) for all components
-		const plans = buildAllComponentDP(targetMb, normalizedComponents, normalizedInv);
+		const plans = buildAllComponentDP(targetMb, components, availableMinerals);
 		if (!plans) {
 			return {
 				status : OutputCode.UNFEASIBLE,
