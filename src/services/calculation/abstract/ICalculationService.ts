@@ -35,7 +35,7 @@ export interface FlagValues {
 /**
  * Result of the calculation.
  */
-export interface CalculationOutput {
+export interface CalculationResult {
 	/**
 	 * The status of the calculation.
 	 * Some statuses may output additional context in {@link statusContext}.
@@ -106,5 +106,5 @@ export interface ICalculationService {
 			availableMinerals : Map<string, QuantifiedMineral[]>,
 			flags? : Flags,
 			flagValues? : FlagValues
-	) : CalculationOutput;
+	) : CalculationResult;
 }

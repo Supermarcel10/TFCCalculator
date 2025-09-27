@@ -1,13 +1,13 @@
 import React from "react";
 import {DesiredOutputTypes} from "@/types";
-import {CalculationOutput, OutputCode} from "@/services/calculation/abstract/ICalculationService";
+import {CalculationResult, OutputCode} from "@/services/calculation/abstract/ICalculationService";
 
 
 const successFormatting = "bg-green-700 text-white";
 const failureFormatting = "bg-yellow-400 text-black";
 
 interface OutputResultProps {
-	output : CalculationOutput | null;
+	output : CalculationResult | null;
 	unit : DesiredOutputTypes;
 	conversions : Record<string, number>;
 }
@@ -24,7 +24,7 @@ export function OutputResult({output, unit, conversions} : Readonly<OutputResult
 	)
 }
 
-function GetInnerOutput(output : CalculationOutput, unit : DesiredOutputTypes, conversions : Record<DesiredOutputTypes, number>) {
+function GetInnerOutput(output : CalculationResult, unit : DesiredOutputTypes, conversions : Record<DesiredOutputTypes, number>) {
 	const success = output.status === OutputCode.SUCCESS;
 
 	const displayQuantity = output.amountMb / (conversions[unit] ?? 1);

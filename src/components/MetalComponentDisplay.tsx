@@ -7,7 +7,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
-import {CalculationOutput, ICalculationService} from "@/services/calculation/abstract/ICalculationService";
+import {CalculationResult, ICalculationService} from "@/services/calculation/abstract/ICalculationService";
 import {CalculationService} from "@/services/calculation/CalculationService";
 
 
@@ -29,7 +29,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [isCalculating, setIsCalculating] = useState<boolean>(false);
-	const [result, setResult] = useState<CalculationOutput | null>(null);
+	const [result, setResult] = useState<CalculationResult | null>(null);
 	const [error, setError] = useState<Error | string | null>(null);
 
 	useEffect(() => {

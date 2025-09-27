@@ -1,5 +1,5 @@
 import {QuantifiedMineral, SmeltingComponent} from "@/types";
-import {CalculationOutput, Flags, FlagValues, ICalculationService, OutputCode} from "@/services/calculation/abstract/ICalculationService";
+import {CalculationResult, Flags, FlagValues, ICalculationService, OutputCode} from "@/services/calculation/abstract/ICalculationService";
 
 
 /* ------------------------------ Utilities ------------------------------ */
@@ -312,7 +312,7 @@ function earlyFeasibilityChecks(
 		normalizedInv : Map<string, QuantifiedMineral[]>,
 		_flags? : Flags, // currently unused
 		_flagValues? : FlagValues // currently unused
-) : CalculationOutput | null {
+) : CalculationResult | null {
 	// Screen for bad inputs
 	if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
 		return {
@@ -425,7 +425,7 @@ export class CalculationService implements ICalculationService {
 			availableMinerals : Map<string, QuantifiedMineral[]>,
 			flags? : Flags,
 			flagValues? : FlagValues,
-	) : CalculationOutput {
+	) : CalculationResult {
 		// Normalize component keys for lookups
 		const normalizedComponents = components.map((c) => ({
 			component : normalize(c.mineral),
