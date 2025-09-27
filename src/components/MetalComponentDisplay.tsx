@@ -1,13 +1,15 @@
 import {ErrorComponent} from "@/components/ErrorComponent";
 import {MineralAccordion} from "@/components/MineralAccordion";
 import {OutputResult} from "@/components/OutputResult";
-import {calculateSmeltingOutput, CalculationOutput} from "@/functions/algorithm";
 import {capitaliseFirstLetterOfEachWord} from "@/functions/utils";
 import {DesiredOutputTypes, Mineral, QuantifiedMineral, SmeltingComponent} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
+import {CalculationOutput, ICalculationService} from "@/services/calculation/abstract/ICalculationService";
+import {CalculationService} from "@/services/calculation/CalculationService";
+
 
 interface MetalDisplayProps {
 	metal?: string;
@@ -15,6 +17,8 @@ interface MetalDisplayProps {
 
 export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const { type, id, version } = useParams();
+
+	const calculationService : ICalculationService = new CalculationService();
 
 	const [components, setComponents] = useState<SmeltingComponent[] | null>(null);
 	const [minerals, setMinerals] = useState<Map<string, QuantifiedMineral[]>>(new Map());
@@ -130,14 +134,9 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		if (mbConstants == null) return;
 		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
 
-		try {
-			setResult(calculateSmeltingOutput(desiredOutputInMb, components, mineralWithQuantities));
-		} catch (err) {
-			setError(`Failed to calculate! ${err}`);
-			console.error("Error calculating:", err);
-		} finally {
-			setIsCalculating(false);
-		}
+		const result = calculationService.calculateSmeltingOutput(desiredOutputInMb, components, mineralWithQuantities);
+		setResult(result);
+		setIsCalculating(false);
 	};
 
 	const handleKeyPress = async (e: React.KeyboardEvent) => {

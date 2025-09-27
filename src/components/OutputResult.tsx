@@ -1,6 +1,6 @@
-import {CalculationOutput, OutputCode} from "@/functions/algorithm";
 import React from "react";
 import {DesiredOutputTypes} from "@/types";
+import {CalculationOutput, OutputCode} from "@/services/calculation/abstract/ICalculationService";
 
 
 const successFormatting = "bg-green-700 text-white";
