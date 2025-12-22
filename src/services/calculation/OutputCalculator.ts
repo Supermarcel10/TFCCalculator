@@ -5,8 +5,6 @@ import {IComponentPlanService, PerComponentPlan} from "./abstract/IComponentPlan
 import {QuantifiedMineral, SmeltingComponent} from "@/types";
 import {IValidationService} from "@/services/calculation/abstract/IValidationService";
 import {ICombinatorialSearchService} from "./abstract/ICombinationalSearchService";
-
-// TODO: Potentially remove elsewhere to injection
 import {ChunkingService} from "@/services/calculation/ChunkingService";
 import {DPService} from "@/services/calculation/DPService";
 import {InputNormalizationService} from "@/services/calculation/InputNormalizationService";
@@ -16,11 +14,11 @@ import {CombinatorialSearchService} from "@/services/calculation/CombinatorialSe
 
 
 export class OutputCalculator implements IOutputCalculator {
-	private inputNormalizationService : IInputNormalizationService;
-	private validationService : IValidationService;
-	private componentPlanService : IComponentPlanService;
-	private combinatorialSearchService : ICombinatorialSearchService;
-	private dpService : IDPService;
+	private readonly inputNormalizationService : IInputNormalizationService;
+	private readonly validationService : IValidationService;
+	private readonly componentPlanService : IComponentPlanService;
+	private readonly combinatorialSearchService : ICombinatorialSearchService;
+	private readonly dpService : IDPService;
 
 	constructor() {
 		const chunkingService = new ChunkingService();
