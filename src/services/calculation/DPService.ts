@@ -4,7 +4,7 @@ import {ComponentDP, IDPService} from "@/services/calculation/abstract/IDPServic
 
 
 export class DPService implements IDPService {
-	constructor(private chunkingService : IChunkingService) {}
+	constructor(private readonly chunkingService : IChunkingService) {}
 
 	buildComponentDP(component : string, minerals : QuantifiedMineral[], cap : number) : ComponentDP {
 		const chunks = this.chunkingService.splitAllIntoChunks(minerals, cap);

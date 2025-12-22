@@ -5,7 +5,7 @@ import {NormalizedComponent} from "@/services/calculation/abstract/IInputNormali
 
 
 export class ComponentPlanService implements IComponentPlanService {
-	constructor(private dpService : IDPService) {}
+	constructor(private readonly dpService : IDPService) {}
 
 	createComponentPlans(
 			targetMb : number,

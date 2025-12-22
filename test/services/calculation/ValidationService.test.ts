@@ -32,8 +32,9 @@ describe("ValidationService", () => {
 				{target : 0, desc : "zero"},
 				{target : -100, desc : "negative"},
 				{target : 100.5, desc : "decimal"},
-				{target : Infinity, desc : "infinity"},
-				{target : NaN, desc : "NaN"}
+				{target : Number.POSITIVE_INFINITY, desc : "pos infinity"},
+				{target : Number.NEGATIVE_INFINITY, desc : "neg infinity"},
+				{target : Number.NaN, desc : "NaN"}
 			];
 
 			testCases.forEach(({target}) => {
