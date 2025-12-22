@@ -99,6 +99,6 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 	}
 
 	private getMax(arr : number[]) : number {
-		return arr.length ? arr.at(arr.length - 1) ?? 0 : 0;
+		return arr.length ? arr.at(-1) ?? 0 : 0;
 	}
 }
