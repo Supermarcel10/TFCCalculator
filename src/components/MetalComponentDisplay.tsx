@@ -1,13 +1,15 @@
 import {ErrorComponent} from "@/components/ErrorComponent";
 import {MineralAccordion} from "@/components/MineralAccordion";
 import {OutputResult} from "@/components/OutputResult";
-import {calculateSmeltingOutput, CalculationOutput} from "@/functions/algorithm";
 import {capitaliseFirstLetterOfEachWord} from "@/functions/utils";
 import {DesiredOutputTypes, Mineral, QuantifiedMineral, SmeltingComponent} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
+import {CalculationOutput} from "@/services/calculation/abstract/IOutputCalculator";
+import {OutputCalculator} from "@/services/calculation/OutputCalculator";
+
 
 interface MetalDisplayProps {
 	metal?: string;
@@ -15,6 +17,8 @@ interface MetalDisplayProps {
 
 export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const { type, id, version } = useParams();
+
+	const outputCalculator = new OutputCalculator();
 
 	const [components, setComponents] = useState<SmeltingComponent[] | null>(null);
 	const [minerals, setMinerals] = useState<Map<string, QuantifiedMineral[]>>(new Map());
@@ -131,7 +135,11 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
 
 		try {
-			setResult(calculateSmeltingOutput(desiredOutputInMb, components, mineralWithQuantities));
+			setResult(outputCalculator.calculateSmeltingOutput(
+					desiredOutputInMb,
+					components,
+					mineralWithQuantities
+			));
 		} catch (err) {
 			setError(`Failed to calculate! ${err}`);
 			console.error("Error calculating:", err);
