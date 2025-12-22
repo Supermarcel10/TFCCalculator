@@ -22,6 +22,7 @@ export class DPService implements IDPService {
 			if (weight <= 0 || weight > cap) {
 				continue;
 			}
+
 			for (let sumBefore = cap - weight; sumBefore >= 0; sumBefore--) {
 				const sumAfter = sumBefore + weight;
 				if (reachable[sumBefore] && !reachable[sumAfter]) {
@@ -31,6 +32,7 @@ export class DPService implements IDPService {
 				}
 			}
 		}
+
 		return {component, cap, reachable, prevSum, lastChunkIndex, chunks};
 	}
 
@@ -60,6 +62,7 @@ export class DPService implements IDPService {
 					quantity : chunk.qty
 				});
 			}
+
 			sum = dp.prevSum[sum];
 		}
 

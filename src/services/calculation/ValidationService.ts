@@ -10,7 +10,6 @@ export class ValidationService implements IValidationService {
 			normalizedComponents : NormalizedComponent[],
 			normalizedInv : Map<string, QuantifiedMineral[]>
 	) : ValidationResult {
-		// Screen for bad inputs
 		if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
 			return {
 				isValid : false,
