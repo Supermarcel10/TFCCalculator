@@ -4,7 +4,7 @@ import {QuantifiedMineral} from "@/types";
 
 export class ChunkingService implements IChunkingService {
 	splitIntoChunks(qm : QuantifiedMineral, clampUnitsTo? : number) : Chunk[] {
-		const maxUnitsUseful = clampUnitsTo !== undefined ? Math.min(qm.quantity, clampUnitsTo) : qm.quantity;
+		const maxUnitsUseful = clampUnitsTo === undefined ? qm.quantity : Math.min(qm.quantity, clampUnitsTo);
 
 		const chunks : Chunk[] = [];
 		let remaining = Math.max(0, maxUnitsUseful);

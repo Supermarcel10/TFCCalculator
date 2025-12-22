@@ -11,6 +11,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 		const suffixMax = new Int32Array(n + 1);
 		suffixMin[n] = 0;
 		suffixMax[n] = 0;
+
 		for (let i = n - 1; i >= 0; i--) {
 			const minCand = this.getMin(plans[i].candidates);
 			const maxCand = this.getMax(plans[i].candidates);
@@ -30,9 +31,11 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 			if (sumSoFar > targetMb) {
 				return;
 			}
+
 			if (sumSoFar + suffixMin[i] > targetMb) {
 				return;
 			}
+
 			if (sumSoFar + suffixMax[i] < targetMb) {
 				return;
 			}
@@ -41,6 +44,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 				if (sumSoFar === targetMb) {
 					solved = true;
 				}
+
 				return;
 			}
 
@@ -54,6 +58,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 				if (newSum + suffixMin[i + 1] > targetMb) {
 					continue;
 				}
+
 				if (newSum + suffixMax[i + 1] < targetMb) {
 					continue;
 				}
@@ -62,6 +67,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 				if (seen.has(key)) {
 					continue;
 				}
+
 				seen.add(key);
 
 				choice.set(plan.component, opt);
@@ -69,6 +75,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 				if (solved) {
 					return;
 				}
+
 				choice.delete(plan.component);
 			}
 		};
@@ -79,6 +86,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 				m.set(plans[0].component, targetMb);
 				return m;
 			}
+
 			return null;
 		}
 
@@ -91,6 +99,6 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 	}
 
 	private getMax(arr : number[]) : number {
-		return arr.length ? arr[arr.length - 1] : 0;
+		return arr.length ? arr.at(arr.length - 1) ?? 0 : 0;
 	}
 }
