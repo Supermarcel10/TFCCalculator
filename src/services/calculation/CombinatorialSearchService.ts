@@ -3,26 +3,6 @@ import {PerComponentPlan} from "@/services/calculation/abstract/IComponentPlanSe
 
 
 export class CombinatorialSearchService implements ICombinatorialSearchService {
-	hasTarget(arr : number[], x : number) : boolean {
-		let lo = 0;
-		let hi = arr.length - 1;
-
-		while (lo <= hi) {
-			const mid = (lo + hi) >>> 1;
-			if (arr[mid] === x) {
-				return true;
-			}
-
-			if (arr[mid] < x) {
-				lo = mid + 1;
-			} else {
-				hi = mid - 1;
-			}
-		}
-
-		return false;
-	}
-
 	findComponentCombination(plans : PerComponentPlan[], targetMb : number) : Map<string, number> | null {
 		const n = plans.length;
 		plans.sort((a, b) => a.candidates.length - b.candidates.length);
@@ -94,7 +74,7 @@ export class CombinatorialSearchService implements ICombinatorialSearchService {
 		};
 
 		if (n === 1) {
-			if (this.hasTarget(plans[0].candidates, targetMb)) {
+			if (plans[0].candidates.includes(targetMb)) {
 				const m = new Map<string, number>();
 				m.set(plans[0].component, targetMb);
 				return m;

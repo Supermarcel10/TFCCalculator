@@ -5,29 +5,6 @@ import {ComponentDP} from "@/services/calculation/abstract/IDPService";
 
 describe("CombinatorialSearchService", () => {
 	let sut = new CombinatorialSearchService();
-	// TODO: Check if this method can just be replaced?
-	describe("hasTarget", () => {
-		it("should find target in sorted array", () => {
-			const arr = [100, 200, 300, 400, 500];
-
-			expect(sut.hasTarget(arr, 100)).toBe(true);
-			expect(sut.hasTarget(arr, 300)).toBe(true);
-			expect(sut.hasTarget(arr, 500)).toBe(true);
-		});
-
-		it("should not find target not in array", () => {
-			const arr = [100];
-
-			expect(sut.hasTarget(arr, 0)).toBe(false);
-		});
-
-		it("should handle empty array", () => {
-			const arr : number[] = [];
-
-			expect(sut.hasTarget(arr, 100)).toBe(false);
-		});
-	});
-
 	describe("findComponentCombination", () => {
 		it("should find combination for single component", () => {
 			const plans : PerComponentPlan[] = [
