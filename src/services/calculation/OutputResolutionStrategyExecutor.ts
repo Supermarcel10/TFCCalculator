@@ -11,6 +11,8 @@ import { DPService } from "./DPService";
 import { ChunkingService } from "./ChunkingService";
 import { IOutputResolutionStrategySelector } from "./abstract/IOutputResolutionStrategySelector";
 import { OutputResolutionStrategySelector } from "./OutputResolutionStrategySelector";
+import { IValidationService } from "./abstract/IValidationService";
+import { ValidationService } from "./ValidationService";
 
 
 export default class OutputResolutionStrategyExecutor implements IOutputResolutionStrategyExecutor {
@@ -18,6 +20,7 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
   private readonly dpService : IDPService;
   private readonly componentPlanService : IComponentPlanService;
 	private readonly combinatorialSearchService : ICombinatorialSearchService;
+	private readonly validationService : IValidationService;
 
 	constructor() {
 	  const chunkingService = new ChunkingService();
@@ -26,6 +29,7 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 	  this.dpService = new DPService(chunkingService);
   	this.componentPlanService = new ComponentPlanService(this.dpService);
   	this.combinatorialSearchService = new CombinatorialSearchService();
+		this.validationService = new ValidationService();
 	}
 
 	public executeStrategy(
@@ -45,8 +49,11 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 
   	return strategy.resolve(
   		targetMb,
+  		normalizedComponents,
+  		normalizedInventory,
   		flagValues,
-  		calculationFn
+  		calculationFn,
+  		this.validationService
   	);
 	}
 
