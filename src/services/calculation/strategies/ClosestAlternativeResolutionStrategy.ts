@@ -7,7 +7,7 @@ import { ExactMatchResolutionStrategy } from "./ExactMatchResolutionStrategy";
 
 
 export class ClosestAlternativeResolutionStrategy implements IOutputResolutionStrategy {
-  private readonly exactMatchResolutionStrategy: ExactMatchResolutionStrategy = new ExactMatchResolutionStrategy();
+  private readonly exactMatchStrategy: ExactMatchResolutionStrategy = new ExactMatchResolutionStrategy();
   private static readonly MAX_ATTEMPTS = 5;
 
   resolve(
@@ -86,7 +86,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
       return this.createUnfeasibleResult("intervalMb is required for CLOSEST_ALTERNATIVE flag");
     }
 
-    const exactResult = this.exactMatchResolutionStrategy.resolve(
+    const exactResult = this.exactMatchStrategy.resolve(
       targetMb,
       normalizedComponents,
       normalizedInventory,

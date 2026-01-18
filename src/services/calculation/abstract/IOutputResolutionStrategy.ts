@@ -3,6 +3,7 @@ import {NormalizedComponent} from "@/services/calculation/abstract/IInputNormali
 import {QuantifiedMineral} from "@/types";
 import {IValidationService} from "@/services/calculation/abstract/IValidationService";
 
+
 export interface IOutputResolutionStrategy {
 	resolve(
 		targetMb: number,
