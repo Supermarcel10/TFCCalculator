@@ -1,7 +1,7 @@
-![Maintainability Badge](https://sonarcloud.io/api/project_badges/measure?project=TFGCalculator&metric=sqale_rating)
-![Reliability Badge](https://sonarcloud.io/api/project_badges/measure?project=TFGCalculator&metric=reliability_rating)
-![Bug Badge](https://sonarcloud.io/api/project_badges/measure?project=TFGCalculator&metric=bugs)
-![Tech Debt Badge](https://sonarcloud.io/api/project_badges/measure?project=TFGCalculator&metric=sqale_index)
+![Maintainability Badge](https://sonarcloud.io/api/project_badges/measure?project=TFCCalculator&metric=sqale_rating)
+![Reliability Badge](https://sonarcloud.io/api/project_badges/measure?project=TFCCalculator&metric=reliability_rating)
+![Bug Badge](https://sonarcloud.io/api/project_badges/measure?project=TFCCalculator&metric=bugs)
+![Tech Debt Badge](https://sonarcloud.io/api/project_badges/measure?project=TFCCalculator&metric=sqale_index)
 
 # TerraFirmaCraft Metal Calculator
 
