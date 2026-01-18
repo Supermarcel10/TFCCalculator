@@ -53,18 +53,9 @@ Please read and respect the [code of conduct](?tab=coc-ov-file) and process for 
 
 ## 💻 Local Setup
 1. Pull the latest version of `main`
-2. Ensure that Next.js is installed. If not, install using `npm install next react react-dom`
-3. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
+2. Ensure that Next.js is installed. If not, install using `pnpm install next react react-dom`
+3. Run the development server using `pnpm dev`
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result
 
 ## 🚀 Deployment
 This project is set up for automatic deployment on Vercel.
