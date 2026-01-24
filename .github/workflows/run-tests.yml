@@ -29,17 +29,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install SonarScanner
-        run: pnpm add -D @sonarsource/scanner
-
       - name: Run tests and generate coverage
         run: pnpm run test:coverage
 
       - name: SonarQube Scan
-        run: |
-          npx sonar-scanner \
-            -Dsonar.verbose=true \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          args: >
+            -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
