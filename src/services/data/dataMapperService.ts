@@ -1,6 +1,6 @@
-import {RouteParams}                                                    from "@/types/gameversions";
+import {RouteParams, VersionType} from "@/types/gameversions";
 import {Mineral, SmeltingComponent, SmeltingOutput, SmeltingOutputType} from "@/types";
-import {IDataReaderService}                                             from "@/services/data/dataReaderService";
+import {IDataReaderService} from "@/services/data/dataReaderService";
 import {capitaliseFirstLetterOfEachWord, replaceUnderscoreWithSpace} from "@/functions/utils";
 
 
@@ -127,8 +127,9 @@ export class DataMapperService implements IDataMapperService {
 		const rawGameVersionData = await this.dataReaderService.getGameVersionsJSON();
 
 		const versionsSplit = params.version.split("_", 2);
+    const versionType = params.type as VersionType;
 
-		const resource = rawGameVersionData[params.type]
+		const resource = rawGameVersionData[versionType]
 				.filter(r => r.supported)
 				.filter(r => r.id == params.id)
 				.filter(r => r.gameVersion == versionsSplit[0])

@@ -1,12 +1,11 @@
 import {NextResponse} from "next/server";
-import {VersionType} from "@/types/gameversions";
 import {DataMapperService, DataServiceError} from "@/services/data/dataMapperService";
 import {DataReaderService} from "@/services/data/dataReaderService";
 
 
 interface RouteContext {
 	params : Promise<{
-		type : VersionType;
+		type : string;
 		id : string;
 		version : string;
 	}>;
