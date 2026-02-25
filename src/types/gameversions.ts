@@ -18,7 +18,7 @@ export interface GameVersions {
 }
 
 export interface RouteParams {
-	type : VersionType;
+	type : string;
 	id : string;
 	version : string;
 }

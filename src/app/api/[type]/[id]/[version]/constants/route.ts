@@ -8,7 +8,7 @@ export type ApiResponse = Record<string, number>;
 
 interface RouteContext {
 	params : Promise<{
-		type : VersionType;
+		type : string;
 		id : string;
 		version : string;
 	}>;
@@ -20,8 +20,9 @@ export async function GET(
 ) {
 	const {type, id, version} = await context.params;
 	const data = gameVersionJson as GameVersions;
+  const versionType = type as VersionType;
 
-	const resource = data[type]
+	const resource = (data[versionType] ?? [])
 			.find(item => filterVersionAndId(item, id, version));
 
 	if (resource == undefined) {
