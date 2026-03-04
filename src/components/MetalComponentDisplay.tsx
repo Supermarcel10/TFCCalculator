@@ -72,6 +72,11 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		Promise.all([metalsTask, constantsTask]).then(_ => setIsLoading(false));
 	}, [type, id, version, metal]);
 
+	useEffect(() => {
+		setResult(null);
+		setError(null);
+	}, [desiredOutputInUnits, unit, closestAlternative, minerals]);
+
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
 		setDesiredOutputInUnits(isNaN(value) ? 0 : value);
