@@ -221,7 +221,12 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			<ErrorComponent error={error} />
 			{isReadyToShowOutputs
 					&& mbConstants != null
-					&& <OutputResult output={result} unit={calculationUnit} conversions={mbConstants} />
+					&& <OutputResult 
+							output={result} 
+							unit={calculationUnit} 
+							conversions={mbConstants} 
+							desiredMb={desiredOutputInUnits * (mbConstants[unit] ?? 1)}
+						/>
 			}
 
 			{isReadyToShowInputs && <div className="bg-white text-black rounded-lg shadow p-6">

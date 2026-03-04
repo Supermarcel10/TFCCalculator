@@ -3,28 +3,34 @@ import {DesiredOutputTypes} from "@/types";
 import {CalculationOutput, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 
 
-const successFormatting = "bg-green-700 text-white";
-const failureFormatting = "bg-yellow-400 text-black";
+const successFormatting = "bg-green-200 text-black";
+const alternativeFormatting = "bg-teal-200 text-black";
+const failureFormatting = "bg-yellow-200 text-black";
 
 interface OutputResultProps {
 	output : CalculationOutput | null;
 	unit : DesiredOutputTypes;
 	conversions : Record<string, number>;
+	desiredMb : number;
 }
 
-export function OutputResult({output, unit, conversions} : Readonly<OutputResultProps>) {
+export function OutputResult({output, unit, conversions, desiredMb} : Readonly<OutputResultProps>) {
 	if (!output) return;
 
 	const success = output.status === OutputCode.SUCCESS;
+	const isAlternative = success && output.amountMb !== desiredMb;
+
+	const formatting = isAlternative ? alternativeFormatting : (success ? successFormatting : failureFormatting);
+
 	return (
-			<div className={`rounded-lg shadow p-6 ${success ? successFormatting : failureFormatting}`}>
+			<div className={`rounded-lg shadow p-6 ${formatting}`}>
 				<h2 className="text-xl text-center font-bold mb-4">OUTPUT</h2>
-				{GetInnerOutput(output, unit, conversions)}
+				{GetInnerOutput(output, unit, conversions, isAlternative)}
 			</div>
 	)
 }
 
-function GetInnerOutput(output : CalculationOutput, unit : DesiredOutputTypes, conversions : Record<DesiredOutputTypes, number>) {
+function GetInnerOutput(output : CalculationOutput, unit : DesiredOutputTypes, conversions : Record<DesiredOutputTypes, number>, isAlternative : boolean) {
 	const success = output.status === OutputCode.SUCCESS;
 
 	const displayQuantity = output.amountMb / (conversions[unit] ?? 1);
@@ -32,9 +38,13 @@ function GetInnerOutput(output : CalculationOutput, unit : DesiredOutputTypes, c
 
 	if (!success) return (<p className="text-lg text-center">{output.statusContext}!</p>)
 
+	const message = isAlternative
+		? `Closest alternative: ${displayQuantity} ${unit}${plural}`
+		: `Yields exactly ${displayQuantity} ${unit}${plural}!`;
+
 	return (
 			<div>
-				<p className="text-xl text-center">Yields exactly {displayQuantity} {unit}{plural}!</p>
+				<p className="text-xl text-center">{message}</p>
 				<div className="p-4">
 					<div className="flex flex-wrap justify-center gap-4">
 						{output.usedMinerals.map(usedMineral => {
