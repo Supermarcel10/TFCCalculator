@@ -34,11 +34,25 @@ export class ValidationService implements IValidationService {
 			};
 		}
 
-		// Total available mB must be >= targetMb
-		let totalAvailableFromRecipe = 0;
-		for (const {component} of normalizedComponents) {
-			totalAvailableFromRecipe += this.totalAvailableForComponent(component, normalizedInv);
-		}
+	  let totalAvailableFromRecipe = 0;
+    for (const {component, minPct} of normalizedComponents) {
+ 			const minMb = Math.ceil((minPct / 100) * targetMb);
+ 			const available = this.totalAvailableForComponent(component, normalizedInv);
+      totalAvailableFromRecipe += available;
+
+ 			if (available < minMb) {
+				return {
+ 					isValid : false,
+ 					error : {
+  						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
+  						statusContext : `Not enough ${component} for minimum requirement`,
+  						amountMb : 0,
+  						usedMinerals : []
+ 					}
+				};
+		  }
+   	}
+
 		if (totalAvailableFromRecipe < targetMb) {
 			return {
 				isValid : false,
@@ -49,23 +63,6 @@ export class ValidationService implements IValidationService {
 					usedMinerals : []
 				}
 			};
-		}
-
-		// Total available mB for each Component must be >= minPct
-		for (const {component, minPct} of normalizedComponents) {
-			const minMb = Math.ceil((minPct / 100) * targetMb);
-			const available = this.totalAvailableForComponent(component, normalizedInv);
-			if (available < minMb) {
-				return {
-					isValid : false,
-					error : {
-						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-						statusContext : `Not enough ${component} for minimum requirement`,
-						amountMb : 0,
-						usedMinerals : []
-					}
-				};
-			}
 		}
 
 		return {isValid : true};

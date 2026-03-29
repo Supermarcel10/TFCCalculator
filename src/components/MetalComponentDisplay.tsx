@@ -1,13 +1,14 @@
 import {ErrorComponent} from "@/components/ErrorComponent";
 import {MineralAccordion} from "@/components/MineralAccordion";
 import {OutputResult} from "@/components/OutputResult";
+import {Tooltip} from "@/components/Tooltip";
 import {capitaliseFirstLetterOfEachWord} from "@/functions/utils";
 import {DesiredOutputTypes, Mineral, QuantifiedMineral, SmeltingComponent} from "@/types";
 import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
-import {CalculationOutput} from "@/services/calculation/abstract/IOutputCalculator";
+import {CalculationOutput, Flags, FlagValues} from "@/services/calculation/abstract/IOutputCalculator";
 import {OutputCalculator} from "@/services/calculation/OutputCalculator";
 
 
@@ -26,6 +27,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [unit, setUnit] = useState<DesiredOutputTypes>(DesiredOutputTypes.Ingot);
 	const [calculationUnit, setCalculationUnit] = useState<DesiredOutputTypes>(DesiredOutputTypes.Ingot);
 	const [desiredOutputInUnits, setDesiredOutputInUnits] = useState<number>(0);
+	const [closestAlternative, setClosestAlternative] = useState<boolean>(true);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [isCalculating, setIsCalculating] = useState<boolean>(false);
@@ -69,6 +71,11 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 		Promise.all([metalsTask, constantsTask]).then(_ => setIsLoading(false));
 	}, [type, id, version, metal]);
+
+	useEffect(() => {
+		setResult(null);
+		setError(null);
+	}, [desiredOutputInUnits, unit, closestAlternative, minerals]);
 
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
@@ -134,11 +141,18 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		if (mbConstants == null) return;
 		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
 
+		const flags: Flags | undefined = closestAlternative ? Flags.CLOSEST_ALTERNATIVE : undefined;
+		const flagValues: FlagValues | undefined = closestAlternative
+			? { intervalMb: mbConstants[unit] ?? 100 }
+			: undefined;
+
 		try {
 			setResult(outputCalculator.calculateSmeltingOutput(
 					desiredOutputInMb,
 					components,
-					mineralWithQuantities
+					mineralWithQuantities,
+					flags,
+					flagValues
 			));
 		} catch (err) {
 			setError(`Failed to calculate! ${err}`);
@@ -195,13 +209,29 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 							<option value={DesiredOutputTypes.Millibucket} aria-label="milli-bucket">mB</option>
 						</select>
 					</div>
+
+					<label className="flex items-center gap-2 text-gray-700 mt-4">
+						<input
+							type="checkbox"
+							checked={closestAlternative}
+							onChange={(e) => setClosestAlternative(e.target.checked)}
+							className="w-4 h-4"
+						/>
+						Allow closest alternative
+						<Tooltip content="If enabled, when exact output cannot be achieved, the closest achievable output is shown instead. This will search for higher than desired quantity before searching lower." />
+					</label>
 				</div>
 			</div>
 
 			<ErrorComponent error={error} />
 			{isReadyToShowOutputs
 					&& mbConstants != null
-					&& <OutputResult output={result} unit={calculationUnit} conversions={mbConstants} />
+					&& <OutputResult 
+							output={result} 
+							unit={calculationUnit} 
+							conversions={mbConstants} 
+							desiredMb={desiredOutputInUnits * (mbConstants[unit] ?? 1)}
+						/>
 			}
 
 			{isReadyToShowInputs && <div className="bg-white text-black rounded-lg shadow p-6">
