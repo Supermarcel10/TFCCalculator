@@ -11,6 +11,7 @@ tfc-types = { path = "../types" }
 serde.workspace = true
 serde_json.workspace = true
 rust-embed.workspace = true
+tracing.workspace = true
 
 [dev-dependencies]
 rstest.workspace = true
