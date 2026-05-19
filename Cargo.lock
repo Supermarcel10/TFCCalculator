@@ -422,27 +422,27 @@ dependencies = [
 ]
 
 [[package]]
-name = "tfc-data"
+name = "tfcc-data"
 version = "0.1.0"
 dependencies = [
  "rstest",
  "rust-embed",
  "serde",
  "serde_json",
- "tfc-types",
+ "tfcc-types",
  "tracing",
 ]
 
 [[package]]
-name = "tfc-server"
+name = "tfcc-server"
 version = "0.1.0"
 dependencies = [
- "tfc-data",
+ "tfcc-data",
  "tracing-subscriber",
 ]
 
 [[package]]
-name = "tfc-types"
+name = "tfcc-types"
 version = "0.1.0"
 dependencies = [
  "rstest",

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rust_embed::RustEmbed;
 use serde::Deserialize;
-use tfc_types::{
+use tfcc_types::{
     BaseGameVersion, GameVersions, Mineral, SmeltingOutput, SmeltingOutputType, VersionType,
 };
 
