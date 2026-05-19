@@ -31,7 +31,7 @@ pub struct SmeltingOutput {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[serde(rename_all = "snake_case")]
 pub enum MineralUseCase {
     Vessel,
     Crucible,
@@ -116,7 +116,7 @@ mod tests {
         let json = r#"{
             "name": "Native Copper",
             "yield": 144,
-            "uses": ["CRUCIBLE"]
+            "uses": ["crucible"]
         }"#;
 
         // Act
@@ -140,10 +140,10 @@ mod tests {
     }
 
     #[rstest]
-    #[case(r#""VESSEL""#, MineralUseCase::Vessel)]
-    #[case(r#""CRUCIBLE""#, MineralUseCase::Crucible)]
-    #[case(r#""BLOOMERY""#, MineralUseCase::Bloomery)]
-    #[case(r#""BLAST_FURNACE""#, MineralUseCase::BlastFurnace)]
+    #[case("\"vessel\"", MineralUseCase::Vessel)]
+    #[case("\"crucible\"", MineralUseCase::Crucible)]
+    #[case("\"bloomery\"", MineralUseCase::Bloomery)]
+    #[case("\"blast_furnace\"", MineralUseCase::BlastFurnace)]
     fn deserialize_mineral_use_case(#[case] json: &str, #[case] expected: MineralUseCase) {
         // Act
         let parsed = serde_json::from_str::<MineralUseCase>(json).unwrap();
