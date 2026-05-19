@@ -1,0 +1,1468 @@
+{
+  "lastUpdated": "2025-07-19",
+  "version": "1.0.0",
+  "schemaVersion": "1",
+  "bismuth": [
+    {
+      "name": "Normal Bismuthinite",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Bismuthinite",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Bismuthinite",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Bismuth Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Bismuth Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "bismuth_bronze": [
+    {
+      "name": "Tiny Pile of Bismuth Bronze Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Bismuth Bronze Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "black_bronze": [
+    {
+      "name": "Tiny Pile of Black Bronze Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Black Bronze Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "black_steel": [
+    {
+      "name": "Tiny Pile of Black Steel Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Black Steel Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "blue_steel": [
+    {
+      "name": "Tiny Pile of Blue Steel Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Blue Steel Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "brass": [
+    {
+      "name": "Tiny Pile of Brass Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Brass Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "copper": [
+    {
+      "name": "Normal Tetrahedrite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Tetrahedrite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Tetrahedrite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Tetrahedrite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Tetrahedrite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tetrahedrite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Normal Native Copper",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Native Copper",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Native Copper",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Copper Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Copper Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Chalcopyrite",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Chalcopyrite",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Chalcopyrite",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Chalcopyrite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Chalcopyrite Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Chalcopyrite Dust",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Normal Malachite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Malachite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Malachite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Malachite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Malachite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Malachite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Bornite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Bornite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Bornite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Bornite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Bornite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Bornite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Chalcocite",
+      "yield": 33,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Chalcocite",
+      "yield": 45,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Chalcocite",
+      "yield": 22,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Chalcocite Dust",
+      "yield": 14,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Chalcocite Dust",
+      "yield": 33,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Chalcocite Dust",
+      "yield": 136,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "gold": [
+    {
+      "name": "Normal Native Gold",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Native Gold",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Native Gold",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Gold Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Gold Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "iron": [
+    {
+      "name": "Raw Iron",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Raw Iron",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Raw Iron",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Iron Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Iron Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Wrought Iron Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Wrought Iron Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Normal Hematite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Hematite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Hematite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Hematite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Hematite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Hematite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Raw Pyrite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Raw Pyrite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Raw Pyrite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Pyrite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Pyrite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Pyrite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Raw Goethite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Raw Goethite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Raw Goethite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Goethite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Goethite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Goethite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Normal Limonite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Limonite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Limonite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Yellow Limonite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Yellow Limonite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Yellow Limonite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery"
+      ]
+    },
+    {
+      "name": "Normal Magnetite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Magnetite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Magnetite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Magnetite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Magnetite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Magnetite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Raw Granitic Mineral Sand",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Raw Granitic Mineral Sand",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Raw Granitic Mineral Sand",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Granitic Mineral Sand",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Granitic Mineral Sand",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Granitic Mineral Sand",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Raw Basaltic Mineral Sand",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Rich Raw Basaltic Mineral Sand",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Poor Raw Basaltic Mineral Sand",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Basaltic Mineral Sand",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Small Pile of Basaltic Mineral Sand",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible",
+        "bloomery",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Basaltic Mineral Sand",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "bloomery",
+        "crucible",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Raw Iron Bloom",
+      "yield": 144,
+      "uses": [
+        "vessel",
+        "crucible",
+        "blast_furnace"
+      ]
+    },
+    {
+      "name": "Refined Iron Bloom",
+      "yield": 144,
+      "uses": [
+        "vessel",
+        "crucible",
+        "blast_furnace"
+      ]
+    }
+  ],
+  "nickel": [
+    {
+      "name": "Raw Nickel",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Nickel",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Nickel",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Nickel Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Nickel Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Normal Garnierite",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Garnierite",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Garnierite",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Garnierite Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Garnierite Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Garnierite Dust",
+      "yield": 144,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Pentlandite",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Pentlandite",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Pentlandite",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Pentlandite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Pentlandite Dust",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Pentlandite Dust",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "red_steel": [
+    {
+      "name": "Tiny Pile of Red Steel Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Red Steel Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "redstone": [
+    {
+      "name": "Raw Redstone",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Redstone",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Redstone",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Redstone Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Redstone Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "rose_gold": [
+    {
+      "name": "Tiny Pile of Rose Gold Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Rose Gold Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "silver": [
+    {
+      "name": "Normal Native Silver",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Native Silver",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Native Silver",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Silver Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Silver Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "steel": [
+    {
+      "name": "Tiny Pile of Steel Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Steel Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "sterling_silver": [
+    {
+      "name": "Tiny Pile of Sterling Silver Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Sterling Silver Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "tin": [
+    {
+      "name": "Raw Tin",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Tin",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Tin",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Tin Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Tin Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Normal Cassiterite",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Cassiterite",
+      "yield": 48,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Cassiterite",
+      "yield": 24,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Cassiterite Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Cassiterite Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Raw Cassiterite Sand",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Raw Cassiterite Sand",
+      "yield": 40,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Raw Cassiterite Sand",
+      "yield": 19,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Cassiterite Sand",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Cassiterite Sand",
+      "yield": 30,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Cassiterite Sand",
+      "yield": 121,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Ground Cassiterite Sand",
+      "yield": 68,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ],
+  "zinc": [
+    {
+      "name": "Normal Sphalerite",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Rich Sphalerite",
+      "yield": 42,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Poor Sphalerite",
+      "yield": 21,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Sphalerite Dust",
+      "yield": 13,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Sphalerite Dust",
+      "yield": 31,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Sphalerite Dust",
+      "yield": 129,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Tiny Pile of Zinc Dust",
+      "yield": 16,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    },
+    {
+      "name": "Small Pile of Zinc Dust",
+      "yield": 36,
+      "uses": [
+        "vessel",
+        "crucible"
+      ]
+    }
+  ]
+}

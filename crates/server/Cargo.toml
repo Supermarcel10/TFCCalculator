@@ -1,0 +1,15 @@
+[package]
+name = "tfcc-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description.workspace = true
+
+[[bin]]
+name = "tfcc-server"
+path = "src/main.rs"
+
+[dependencies]
+tfcc-data = { path = "../data" }
+tracing-subscriber.workspace = true
