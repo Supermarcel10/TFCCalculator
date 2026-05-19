@@ -7,6 +7,10 @@ pkgs.mkShell {
         gh
         # END General
 
+        # START Docker
+        docker
+        # END Docker
+
         # START Node.js
         pnpm
         nodejs_22
