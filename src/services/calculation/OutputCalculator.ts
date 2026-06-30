@@ -2,7 +2,7 @@ import {IInputNormalizationService} from "./abstract/IInputNormalizationService"
 import {CalculationOutput, Flags, FlagValues, IOutputCalculator} from "@/services/calculation/abstract/IOutputCalculator";
 import {QuantifiedMineral, SmeltingComponent} from "@/types";
 import {InputNormalizationService} from "@/services/calculation/InputNormalizationService";
-import { IOutputResolutionStrategyExecutor } from "./abstract/IOutputResolutionStrategyExecutor";
+import {IOutputResolutionStrategyExecutor} from "./abstract/IOutputResolutionStrategyExecutor";
 import OutputResolutionStrategyExecutor from "./OutputResolutionStrategyExecutor";
 
 

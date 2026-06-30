@@ -4,6 +4,8 @@ import {CalculationOutput} from "@/services/calculation/abstract/IOutputCalculat
 
 
 export interface IValidationService {
+	setIntervalMb(intervalMb: number) : void
+
 	validateInput(
 			targetMb : number,
 			normalizedComponents : NormalizedComponent[],
