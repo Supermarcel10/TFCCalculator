@@ -190,7 +190,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
   }
 
   private validateAndGetInterval(flagValues: FlagValues | undefined): number | null {
-    return flagValues?.intervalMb && flagValues.intervalMb > 0
+    return Number.isFinite(flagValues?.intervalMb) && Number.isInteger(flagValues?.intervalMb) && flagValues?.intervalMb > 0
       ? flagValues.intervalMb
       : null;
   }
