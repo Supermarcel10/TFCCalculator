@@ -8,7 +8,7 @@ import {NormalizedComponent} from "@/services/calculation/abstract/IInputNormali
 
 
 export class ValidationService implements IValidationService {
-	#intervalMb: number | null = null;
+	#intervalMb: number = 144;
 
 	setIntervalMb(intervalMb: number) : void {
 		this.#intervalMb = intervalMb;
@@ -19,17 +19,6 @@ export class ValidationService implements IValidationService {
 			normalizedComponents : NormalizedComponent[],
 			normalizedInv : Map<string, QuantifiedMineral[]>
 	) : ValidationResult {
-		if (!Number.isFinite(this.#intervalMb) || this.#intervalMb <= 0 || !Number.isInteger(this.#intervalMb)) {
-			return {
-				isValid : false,
-				error : {
-					status : OutputCode.BAD_REQUEST,
-					amountMb : 0,
-					usedMinerals : [],
-					statusContext : "intervalMb must be a positive integer"
-				}
-			};
-		}
 		if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
 			return {
 				isValid : false,
