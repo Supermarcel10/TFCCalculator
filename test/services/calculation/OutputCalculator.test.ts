@@ -2,11 +2,16 @@ import {OutputCalculator} from "@/services/calculation/OutputCalculator";
 import {createComponent, createQuantifiedMineral, expectUsedToNotExceedAvailable} from "@test/helpers";
 import {Flags, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 import {QuantifiedMineral} from "@/types";
+import {ValidationService} from '../../../src/services/calculation/ValidationService';
 
 
 describe("OutputCalculator", () => {
+	let validationService = new ValidationService();
 	let sut = new OutputCalculator();
 
+	beforeEach(() => {
+		validationService.resetIntervalMb();
+	})
 	describe("calculateSmeltingOutput", () => {
 		it("should calculate successful smelting output", () => {
 			const components = [
@@ -32,7 +37,9 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					1000,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.SUCCESS);
@@ -62,7 +69,9 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					0, // Invalid target
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.BAD_REQUEST);
@@ -85,11 +94,13 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					1000,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB);
-			expect(result.statusContext).toContain("Not enough iron for minimum requirement");
+			expect(result.statusContext).toContain("Not enough iron for minimum requirement (300mB or 2 ingot(s) short)");
 		});
 
 		it("should handle multiple minerals per component", () => {
@@ -110,7 +121,9 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					500,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.SUCCESS);
@@ -138,7 +151,9 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					2000,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.SUCCESS);
@@ -160,11 +175,13 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					100,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.INSUFFICIENT_TOTAL_MB);
-			expect(result.statusContext).toBe("Not enough total material available");
+			expect(result.statusContext).toBe("Not enough total material available (100mB or 1 ingots short)");
 		});
 
 		it("should handle very large quantities efficiently", () => {
@@ -179,7 +196,9 @@ describe("OutputCalculator", () => {
 			const result = sut.calculateSmeltingOutput(
 					50000,
 					components,
-					availableMinerals
+					availableMinerals,
+					undefined,
+					{validationService: validationService}
 			);
 
 			expect(result.status).toBe(OutputCode.SUCCESS);

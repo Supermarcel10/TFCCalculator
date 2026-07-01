@@ -16,48 +16,54 @@ import { ValidationService } from "./ValidationService";
 
 
 export default class OutputResolutionStrategyExecutor implements IOutputResolutionStrategyExecutor {
-  private readonly outputResolutionStrategySelector : IOutputResolutionStrategySelector;
-  private readonly dpService : IDPService;
-  private readonly componentPlanService : IComponentPlanService;
+	private readonly outputResolutionStrategySelector : IOutputResolutionStrategySelector;
+	private readonly dpService : IDPService;
+	private readonly componentPlanService : IComponentPlanService;
 	private readonly combinatorialSearchService : ICombinatorialSearchService;
 	private readonly validationService : IValidationService;
 
 	constructor() {
-	  const chunkingService = new ChunkingService();
+		const chunkingService = new ChunkingService();
 
-    this.outputResolutionStrategySelector = new OutputResolutionStrategySelector();
-	  this.dpService = new DPService(chunkingService);
-  	this.componentPlanService = new ComponentPlanService(this.dpService);
-  	this.combinatorialSearchService = new CombinatorialSearchService();
+		this.outputResolutionStrategySelector = new OutputResolutionStrategySelector();
+		this.dpService = new DPService(chunkingService);
+		this.componentPlanService = new ComponentPlanService(this.dpService);
+		this.combinatorialSearchService = new CombinatorialSearchService();
 		this.validationService = new ValidationService();
 	}
 
 	public executeStrategy(
-	  targetMb : number,
-	  normalizedComponents : NormalizedComponent[],
-	  normalizedInventory : Map<string, QuantifiedMineral[]>,
-	  flags? : Flags,
+		targetMb : number,
+		normalizedComponents : NormalizedComponent[],
+		normalizedInventory : Map<string, QuantifiedMineral[]>,
+		flags? : Flags,
 		flagValues? : FlagValues,
 	) {
-  	const strategy = this.outputResolutionStrategySelector.selectStrategy(flags, flagValues);
-		this.validationService.setIntervalMb(flagValues?.intervalMb ?? 144);
-  	const calculationFn = (amount: number) => this.attemptCalculation(
-  		amount,
-  		normalizedComponents,
-  		normalizedInventory
-  	);
+		if (flagValues?.intervalMb) {
+			this.validationService.setIntervalMb(flagValues?.intervalMb);
+		} else {
+			this.validationService.resetIntervalMb();
+		}
 
-  	return strategy.resolve(
-  		targetMb,
-  		normalizedComponents,
-  		normalizedInventory,
-  		flagValues,
-  		calculationFn,
-  		this.validationService
-  	);
+		const strategy = this.outputResolutionStrategySelector.selectStrategy(flags, flagValues);
+
+		const calculationFn = (amount: number) => this.attemptCalculation(
+			amount,
+			normalizedComponents,
+			normalizedInventory
+		);
+
+		return strategy.resolve(
+			targetMb,
+			normalizedComponents,
+			normalizedInventory,
+			flagValues,
+			calculationFn,
+			this.validationService
+		);
 	}
 
-  private attemptCalculation(
+	private attemptCalculation(
 		targetMb: number,
 		normalizedComponents: NormalizedComponent[],
 		normalizedInv: Map<string, QuantifiedMineral[]>

@@ -14,6 +14,10 @@ export class ValidationService implements IValidationService {
 		this.#intervalMb = intervalMb;
 	}
 
+	resetIntervalMb() : void {
+			this.#intervalMb = 144;
+		}
+
 	validateInput(
 			targetMb : number,
 			normalizedComponents : NormalizedComponent[],
