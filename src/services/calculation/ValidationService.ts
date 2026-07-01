@@ -47,18 +47,18 @@ export class ValidationService implements IValidationService {
 			};
 		}
 
-	  let totalAvailableFromRecipe = 0;
-    for (const {component, minPct} of normalizedComponents) {
+		let totalAvailableFromRecipe = 0;
+		for (const {component, minPct} of normalizedComponents) {
  			const minMb = Math.ceil((minPct / 100) * targetMb);
  			const available = this.totalAvailableForComponent(component, normalizedInv);
-      totalAvailableFromRecipe += available;
+			totalAvailableFromRecipe += available;
 
  			if (available < minMb) {
 				return {
  					isValid : false,
  					error : {
-  						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-  						statusContext : `Not enough ${component} for minimum requirement (`
+							status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
+							statusContext : `Not enough ${component} for minimum requirement (`
 								+ `${minMb - available}`
 								+ "mB or "
 								+ `${
@@ -67,19 +67,19 @@ export class ValidationService implements IValidationService {
 										((minMb - available) / this.#intervalMb).toFixed(3)
 								}`
 								+ " ingot(s) short)",
-  						amountMb : 0,
-  						usedMinerals : []
+							amountMb : 0,
+							usedMinerals : []
  					}
 				};
-		  }
-   	}
+			}
+	 	}
 
 		if (totalAvailableFromRecipe < targetMb) {
 			return {
-                isValid: false,
-                error: {
-                    status: OutputCode.INSUFFICIENT_TOTAL_MB,
-                    statusContext: "Not enough total material available (" +
+								isValid: false,
+								error: {
+										status: OutputCode.INSUFFICIENT_TOTAL_MB,
+										statusContext: "Not enough total material available (" +
 										 + `${targetMb - totalAvailableFromRecipe}`
 										 + "mB or "
 										 + `${
@@ -88,10 +88,10 @@ export class ValidationService implements IValidationService {
 												((targetMb - totalAvailableFromRecipe) / this.#intervalMb).toFixed(3)
 										}`
 										 + " ingots short)",
-                    amountMb: 0,
-                    usedMinerals: []
-                }
-            };
+										amountMb: 0,
+										usedMinerals: []
+								}
+						};
 		}
 
 		return {isValid : true};
