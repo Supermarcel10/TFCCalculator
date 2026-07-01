@@ -8,11 +8,11 @@ import OutputResolutionStrategyExecutor from "./OutputResolutionStrategyExecutor
 
 export class OutputCalculator implements IOutputCalculator {
 	private readonly inputNormalizationService : IInputNormalizationService;
-  private readonly outputResolutionStrategyExecutor : IOutputResolutionStrategyExecutor;
+	private readonly outputResolutionStrategyExecutor : IOutputResolutionStrategyExecutor;
 
 	constructor() {
 		this.inputNormalizationService = new InputNormalizationService();
-    this.outputResolutionStrategyExecutor = new OutputResolutionStrategyExecutor();
+		this.outputResolutionStrategyExecutor = new OutputResolutionStrategyExecutor();
 	}
 
 	calculateSmeltingOutput(
@@ -26,11 +26,11 @@ export class OutputCalculator implements IOutputCalculator {
 		const normalizedInv = this.inputNormalizationService.normalizeInventory(availableMinerals);
 
 		return this.outputResolutionStrategyExecutor.executeStrategy(
-      targetMb,
-      normalizedComponents,
-      normalizedInv,
-      flags,
-      flagValues
+			targetMb,
+			normalizedComponents,
+			normalizedInv,
+			flags,
+			flagValues
 		);
 	}
 }
