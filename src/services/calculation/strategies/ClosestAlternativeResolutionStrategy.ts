@@ -1,13 +1,17 @@
-import {CalculationOutput, FlagValues, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
-import { IOutputResolutionStrategy } from "../abstract/IOutputResolutionStrategy";
-import {NormalizedComponent} from "@/services/calculation/abstract/IInputNormalizationService";
-import {QuantifiedMineral} from "@/types";
-import {IValidationService} from "@/services/calculation/abstract/IValidationService";
-import { ExactMatchResolutionStrategy } from "./ExactMatchResolutionStrategy";
-
+import {
+	CalculationOutput,
+	FlagValues,
+	OutputCode
+} from '@/services/calculation/abstract/IOutputCalculator';
+import {IOutputResolutionStrategy} from '../abstract/IOutputResolutionStrategy';
+import {NormalizedComponent} from '@/services/calculation/abstract/IInputNormalizationService';
+import {QuantifiedMineral} from '@/types';
+import {IValidationService} from '@/services/calculation/abstract/IValidationService';
+import {ExactMatchResolutionStrategy} from './ExactMatchResolutionStrategy';
 
 export class ClosestAlternativeResolutionStrategy implements IOutputResolutionStrategy {
-	private readonly exactMatchStrategy: ExactMatchResolutionStrategy = new ExactMatchResolutionStrategy();
+	private readonly exactMatchStrategy: ExactMatchResolutionStrategy =
+		new ExactMatchResolutionStrategy();
 	private static readonly MAX_ATTEMPTS = 5;
 
 	resolve(
@@ -83,7 +87,9 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 	): CalculationOutput {
 		const interval = this.validateAndGetInterval(flagValues);
 		if (!interval) {
-			return this.createUnfeasibleResult("intervalMb is required for CLOSEST_ALTERNATIVE flag");
+			return this.createUnfeasibleResult(
+				'intervalMb is required for CLOSEST_ALTERNATIVE flag'
+			);
 		}
 
 		const exactResult = this.exactMatchStrategy.resolve(
@@ -109,15 +115,21 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 			validationService
 		);
 
-		return upwardResult ?? this.searchDirection(
-			targetMb,
-			interval,
-			'DOWN',
-			normalizedComponents,
-			normalizedInventory,
-			calculationFn,
-			validationService
-		) ?? this.createUnfeasibleResult("Could not find valid combination at any interval");
+		return (
+			upwardResult ??
+			this.searchDirection(
+				targetMb,
+				interval,
+				'DOWN',
+				normalizedComponents,
+				normalizedInventory,
+				calculationFn,
+				validationService
+			) ??
+			this.createUnfeasibleResult(
+				'Could not find valid combination at any interval'
+			)
+		);
 	}
 
 	private searchDirection(
@@ -132,8 +144,15 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 		let currentMb = this.getStartingMb(targetMb, interval, direction);
 		let attempts = 0;
 
-		while (attempts < ClosestAlternativeResolutionStrategy.MAX_ATTEMPTS && currentMb > 0) {
-			const validation = validationService.validateInput(currentMb, normalizedComponents, normalizedInventory);
+		while (
+			attempts < ClosestAlternativeResolutionStrategy.MAX_ATTEMPTS &&
+			currentMb > 0
+		) {
+			const validation = validationService.validateInput(
+				currentMb,
+				normalizedComponents,
+				normalizedInventory
+			);
 
 			if (validation.isValid) {
 				const result = calculationFn(currentMb);
@@ -144,23 +163,33 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 				return null;
 			}
 
-			currentMb = direction === 'UP'
-				? currentMb + interval
-				: currentMb - interval;
+			currentMb =
+				direction === 'UP' ?
+					currentMb + interval
+					: currentMb - interval;
 			++attempts;
 		}
 
 		return null;
 	}
 
-	private getStartingMb(targetMb: number, interval: number, direction: 'UP' | 'DOWN'): number {
-		const rounded = direction === 'UP'
-			? Math.ceil(targetMb / interval) * interval
-			: Math.floor(targetMb / interval) * interval;
+	private getStartingMb(
+		targetMb: number,
+		interval: number,
+		direction: 'UP' | 'DOWN'
+	): number {
+		const rounded =
+			direction === 'UP' ?
+				Math.ceil(targetMb / interval) * interval
+				: Math.floor(targetMb / interval) * interval;
 
-		return rounded === targetMb
-			? direction === 'UP' ? rounded + interval : rounded - interval
-			: rounded;
+		return (
+			rounded === targetMb ?
+				direction === 'UP' ?
+					rounded + interval
+					: rounded - interval
+				: rounded
+		);
 	}
 
 	private handleInsufficientMb(
@@ -173,7 +202,9 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 	): CalculationOutput {
 		const interval = this.validateAndGetInterval(flagValues);
 		if (!interval) {
-			return this.createUnfeasibleResult("intervalMb is required for CLOSEST_ALTERNATIVE flag");
+			return this.createUnfeasibleResult(
+				'intervalMb is required for CLOSEST_ALTERNATIVE flag'
+			);
 		}
 
 		const downwardResult = this.searchDirection(
@@ -186,18 +217,31 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 			validationService
 		);
 
-		return downwardResult ?? this.createUnfeasibleResult("Could not find valid combination at any interval");
+		return (
+			downwardResult ??
+			this.createUnfeasibleResult(
+				'Could not find valid combination at any interval'
+			)
+		);
 	}
 
-	private validateAndGetInterval(flagValues: FlagValues | undefined): number | null {
-		return Number.isFinite(flagValues?.intervalMb) && Number.isInteger(flagValues?.intervalMb) && flagValues?.intervalMb > 0
-			? flagValues.intervalMb
+	private validateAndGetInterval(
+		flagValues: FlagValues | undefined
+	): number | null {
+		return (
+			Number.isFinite(flagValues?.intervalMb) &&
+			Number.isInteger(flagValues?.intervalMb) &&
+			flagValues?.intervalMb > 0
+		) ?
+			flagValues.intervalMb
 			: null;
 	}
 
 	private isInsufficientMbError(error: CalculationOutput): boolean {
-		return error.status === OutputCode.INSUFFICIENT_TOTAL_MB ||
-					 error.status === OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB;
+		return (
+			error.status === OutputCode.INSUFFICIENT_TOTAL_MB ||
+			error.status === OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB
+		);
 	}
 
 	private isFatalError(error: CalculationOutput | undefined): boolean {
@@ -207,7 +251,8 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 	private createUnfeasibleResult(context?: string): CalculationOutput {
 		return {
 			status: OutputCode.UNFEASIBLE,
-			statusContext: context || "Could not find valid combination of materials",
+			statusContext:
+				context || 'Could not find valid combination of materials',
 			amountMb: 0,
 			usedMinerals: []
 		};

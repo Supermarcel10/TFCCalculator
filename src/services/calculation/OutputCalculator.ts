@@ -1,5 +1,10 @@
 import {IInputNormalizationService} from './abstract/IInputNormalizationService';
-import {CalculationOutput, Flags, FlagValues, IOutputCalculator} from '@/services/calculation/abstract/IOutputCalculator';
+import {
+	CalculationOutput,
+	Flags,
+	FlagValues,
+	IOutputCalculator
+} from '@/services/calculation/abstract/IOutputCalculator';
 import {QuantifiedMineral, SmeltingComponent} from '@/types';
 import {InputNormalizationService} from '@/services/calculation/InputNormalizationService';
 import {IOutputResolutionStrategyExecutor} from './abstract/IOutputResolutionStrategyExecutor';
@@ -11,7 +16,8 @@ export class OutputCalculator implements IOutputCalculator {
 
 	constructor() {
 		this.inputNormalizationService = new InputNormalizationService();
-		this.outputResolutionStrategyExecutor = new OutputResolutionStrategyExecutor();
+		this.outputResolutionStrategyExecutor =
+			new OutputResolutionStrategyExecutor();
 	}
 
 	calculateSmeltingOutput(
@@ -21,8 +27,12 @@ export class OutputCalculator implements IOutputCalculator {
 		flags?: Flags,
 		flagValues?: FlagValues
 	): CalculationOutput {
-		const normalizedComponents = this.inputNormalizationService.normalizeComponents(components);
-		const normalizedInv = this.inputNormalizationService.normalizeInventory(availableMinerals);
+		const normalizedComponents =
+			this.inputNormalizationService.normalizeComponents(components);
+		const normalizedInv =
+			this.inputNormalizationService.normalizeInventory(
+				availableMinerals
+			);
 
 		return this.outputResolutionStrategyExecutor.executeStrategy(
 			targetMb,

@@ -1,31 +1,39 @@
-import { IOutputResolutionStrategyExecutor } from "./abstract/IOutputResolutionStrategyExecutor";
-import { CalculationOutput, Flags, FlagValues, OutputCode } from "./abstract/IOutputCalculator";
-import { NormalizedComponent } from "./abstract/IInputNormalizationService";
-import { QuantifiedMineral } from "@/types";
-import { IComponentPlanService, PerComponentPlan } from "./abstract/IComponentPlanService";
-import { ICombinatorialSearchService } from "./abstract/ICombinationalSearchService";
-import { ComponentPlanService } from "./ComponentPlanService";
-import { CombinatorialSearchService } from "./CombinatorialSearchService";
-import { IDPService } from "./abstract/IDPService";
-import { DPService } from "./DPService";
-import { ChunkingService } from "./ChunkingService";
-import { IOutputResolutionStrategySelector } from "./abstract/IOutputResolutionStrategySelector";
-import { OutputResolutionStrategySelector } from "./OutputResolutionStrategySelector";
-import { IValidationService } from "./abstract/IValidationService";
-import { ValidationService } from "./ValidationService";
-
+import {IOutputResolutionStrategyExecutor} from './abstract/IOutputResolutionStrategyExecutor';
+import {
+	CalculationOutput,
+	Flags,
+	FlagValues,
+	OutputCode
+} from './abstract/IOutputCalculator';
+import {NormalizedComponent} from './abstract/IInputNormalizationService';
+import {QuantifiedMineral} from '@/types';
+import {
+	IComponentPlanService,
+	PerComponentPlan
+} from './abstract/IComponentPlanService';
+import {ICombinatorialSearchService} from './abstract/ICombinationalSearchService';
+import {ComponentPlanService} from './ComponentPlanService';
+import {CombinatorialSearchService} from './CombinatorialSearchService';
+import {IDPService} from './abstract/IDPService';
+import {DPService} from './DPService';
+import {ChunkingService} from './ChunkingService';
+import {IOutputResolutionStrategySelector} from './abstract/IOutputResolutionStrategySelector';
+import {OutputResolutionStrategySelector} from './OutputResolutionStrategySelector';
+import {IValidationService} from './abstract/IValidationService';
+import {ValidationService} from './ValidationService';
 
 export default class OutputResolutionStrategyExecutor implements IOutputResolutionStrategyExecutor {
-	private readonly outputResolutionStrategySelector : IOutputResolutionStrategySelector;
-	private readonly dpService : IDPService;
-	private readonly componentPlanService : IComponentPlanService;
-	private readonly combinatorialSearchService : ICombinatorialSearchService;
-	private readonly validationService : IValidationService;
+	private readonly outputResolutionStrategySelector: IOutputResolutionStrategySelector;
+	private readonly dpService: IDPService;
+	private readonly componentPlanService: IComponentPlanService;
+	private readonly combinatorialSearchService: ICombinatorialSearchService;
+	private readonly validationService: IValidationService;
 
 	constructor() {
 		const chunkingService = new ChunkingService();
 
-		this.outputResolutionStrategySelector = new OutputResolutionStrategySelector();
+		this.outputResolutionStrategySelector =
+			new OutputResolutionStrategySelector();
 		this.dpService = new DPService(chunkingService);
 		this.componentPlanService = new ComponentPlanService(this.dpService);
 		this.combinatorialSearchService = new CombinatorialSearchService();
@@ -33,11 +41,11 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 	}
 
 	public executeStrategy(
-		targetMb : number,
-		normalizedComponents : NormalizedComponent[],
-		normalizedInventory : Map<string, QuantifiedMineral[]>,
-		flags? : Flags,
-		flagValues? : FlagValues,
+		targetMb: number,
+		normalizedComponents: NormalizedComponent[],
+		normalizedInventory: Map<string, QuantifiedMineral[]>,
+		flags?: Flags,
+		flagValues?: FlagValues
 	) {
 		if (flagValues?.intervalMb) {
 			this.validationService.setIntervalMb(flagValues?.intervalMb);
@@ -45,13 +53,17 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 			this.validationService.resetIntervalMb();
 		}
 
-		const strategy = this.outputResolutionStrategySelector.selectStrategy(flags, flagValues);
-
-		const calculationFn = (amount: number) => this.attemptCalculation(
-			amount,
-			normalizedComponents,
-			normalizedInventory
+		const strategy = this.outputResolutionStrategySelector.selectStrategy(
+			flags,
+			flagValues
 		);
+
+		const calculationFn = (amount: number) =>
+			this.attemptCalculation(
+				amount,
+				normalizedComponents,
+				normalizedInventory
+			);
 
 		return strategy.resolve(
 			targetMb,
@@ -70,9 +82,9 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 	): CalculationOutput | null {
 		// 1. Create component plans
 		const plans = this.componentPlanService.createComponentPlans(
-				targetMb,
-				normalizedComponents,
-				normalizedInv
+			targetMb,
+			normalizedComponents,
+			normalizedInv
 		);
 
 		if (!plans) {
@@ -87,7 +99,10 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 		}
 
 		// 3. Find component combination
-		const chosen = this.combinatorialSearchService.findComponentCombination(plans, targetMb);
+		const chosen = this.combinatorialSearchService.findComponentCombination(
+			plans,
+			targetMb
+		);
 		if (!chosen) {
 			return null;
 		}
@@ -96,20 +111,23 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 		const usedMinerals = this.reconstructAllMinerals(plans, chosen);
 
 		return {
-			status : OutputCode.SUCCESS,
-			amountMb : targetMb,
+			status: OutputCode.SUCCESS,
+			amountMb: targetMb,
 			usedMinerals
 		};
 	}
 
 	private reconstructAllMinerals(
-			plans : PerComponentPlan[],
-			chosen : Map<string, number>
-	) : QuantifiedMineral[] {
+		plans: PerComponentPlan[],
+		chosen: Map<string, number>
+	): QuantifiedMineral[] {
 		const byName = new Map<string, QuantifiedMineral>();
 		for (const plan of plans) {
 			const sumChosen = chosen.get(plan.component)!;
-			for (const qm of this.dpService.reconstructMinerals(plan.dp, sumChosen)) {
+			for (const qm of this.dpService.reconstructMinerals(
+				plan.dp,
+				sumChosen
+			)) {
 				const existing = byName.get(qm.name);
 
 				if (existing) {
