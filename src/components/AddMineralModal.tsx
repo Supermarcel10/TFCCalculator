@@ -40,10 +40,6 @@ export function AddMineralModal({
     setSelectedMineral(null);
   }, [searchQuery]);
 
-  const handleSelectMineral = (mineral: QuantifiedMineral) => {
-    setSelectedMineral(mineral);
-  };
-
   const handleAdd = () => {
     if (!selectedMineral || quantity <= 0) return;
 
@@ -89,7 +85,7 @@ export function AddMineralModal({
               filteredMinerals.map((mineral) => (
                 <button
                   key={mineral.name}
-                  onClick={() => handleSelectMineral(mineral)}
+                  onClick={() => setSelectedMineral(mineral)}
                   className="w-full p-3 text-left hover:bg-gray-100 transition-colors"
                 >
                   <span className="font-medium">{mineral.name}</span>
