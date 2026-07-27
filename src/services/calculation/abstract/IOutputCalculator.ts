@@ -1,5 +1,4 @@
 import {QuantifiedMineral, SmeltingComponent} from "@/types";
-import type {IValidationService} from "@/services/calculation/abstract/IValidationService";
 
 
 /**
@@ -31,11 +30,6 @@ export interface FlagValues {
 	 * For e.g. a modpack where an ingot is 100mB would define the interval as 100mB.
 	 */
 	intervalMb? : number;
-
-	/**
-	 * The custom validation service to use.
-	 */
-	validationService?: IValidationService;
 }
 
 /**
