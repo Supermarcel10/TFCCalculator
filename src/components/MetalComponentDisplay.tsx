@@ -35,6 +35,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [error, setError] = useState<Error | string | null>(null);
 	const [consumedSnapshot, setConsumedSnapshot] = useState<QuantifiedMineral[] | null>(null);
 	const [toastMessage, setToastMessage] = useState<string | null>(null);
+	const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!metal) {
@@ -92,8 +93,11 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		if (!hasMinerals) {
 			setResult(null);
 			setError(null);
+			setIsCalculating(false);
 			return;
 		}
+
+		setIsCalculating(true);
 
 		const timeoutId = setTimeout(() => {
 			setCalculationUnit(unit);
@@ -116,10 +120,15 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			} catch (err) {
 				setError(`Failed to calculate! ${err}`);
 				console.error("Error calculating:", err);
+			} finally {
+				setIsCalculating(false);
 			}
 		}, 300);
 
-		return () => clearTimeout(timeoutId);
+		return () => {
+			clearTimeout(timeoutId);
+			setIsCalculating(false);
+		};
 	}, [inventory, inventoryMap, desiredOutputInUnits, unit, closestAlternative, components, mbConstants, isLoading]);
 
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,6 +195,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 		setConsumedSnapshot(snapshot);
 		setInventory(filtered);
+		setIsCalculating(true);
 		setToastMessage("Minerals consumed from inventory!");
 	};
 
@@ -293,7 +303,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 								UNDO
 							</button>
 						)}
-						{result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
+						{!isCalculating && result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
 							<button
 								onClick={handleUseMinerals}
 								className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
