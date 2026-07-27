@@ -86,7 +86,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		}
 
 		const timeoutId = setTimeout(() => {
-			setConsumedSnapshot(null);
 			setCalculationUnit(unit);
 
 			const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
@@ -134,6 +133,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 	const handleMineralQuantityChange = (mineralName: string, e: React.ChangeEvent<HTMLInputElement>) => {
 		const newQty = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+		setConsumedSnapshot(null);
 		setMinerals(prevMinerals => updateMineralQuantity(prevMinerals, mineralName, newQty));
 	};
 
@@ -318,19 +318,20 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			{(consumedSnapshot != null || (result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0)) && (
 				<div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 backdrop-blur  bg-gray-400/20 rounded-xl inline-flex">
 					<div className="flex justify-center gap-4 p-4">
-						{consumedSnapshot != null ? (
+						{consumedSnapshot != null && (
 							<button
 								onClick={handleUndo}
 								className="px-6 py-3 rounded transition-colors bg-amber-500 hover:bg-amber-600 text-white"
 							>
 								UNDO
 							</button>
-						) : (
-  						<button
-  							onClick={handleUseMinerals}
-  							className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
-  						>
-    						CONSUME
+						)}
+						{result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
+							<button
+								onClick={handleUseMinerals}
+								className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+							>
+								CONSUME
 							</button>
 						)}
 					</div>
