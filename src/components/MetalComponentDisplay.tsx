@@ -8,8 +8,9 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
-import {CalculationOutput, Flags, FlagValues} from "@/services/calculation/abstract/IOutputCalculator";
+import {CalculationOutput, Flags, FlagValues, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 import {OutputCalculator} from "@/services/calculation/OutputCalculator";
+import {Toast} from "@/components/Toast";
 
 
 interface MetalDisplayProps {
@@ -33,6 +34,8 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [isCalculating, setIsCalculating] = useState<boolean>(false);
 	const [result, setResult] = useState<CalculationOutput | null>(null);
 	const [error, setError] = useState<Error | string | null>(null);
+	const [consumedSnapshot, setConsumedSnapshot] = useState<Map<string, QuantifiedMineral[]> | null>(null);
+	const [toastMessage, setToastMessage] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!metal) {
@@ -121,6 +124,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			return;
 		}
 
+		setConsumedSnapshot(null);
 		setIsCalculating(true);
 		setCalculationUnit(unit);
 		await new Promise(resolve => setTimeout(resolve, 0));
@@ -166,6 +170,59 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		if (e.key === "Enter") {
 			await handleCalculate();
 		}
+	};
+
+	const deepCloneMinerals = (source: Map<string, QuantifiedMineral[]>): Map<string, QuantifiedMineral[]> =>
+		new Map(
+			[...source.entries()].map(([key, values]) => [
+				key,
+				values.map(v => ({ ...v }))
+			])
+		);
+
+	const handleUseMinerals = () => {
+		if (!result || result.status !== OutputCode.SUCCESS) return;
+
+		const snapshot = deepCloneMinerals(minerals);
+		const newMinerals = deepCloneMinerals(minerals);
+
+		for (const used of result.usedMinerals) {
+			let found = false;
+			for (const [, mineralArray] of newMinerals.entries()) {
+				const mineral = mineralArray.find(m => m.name === used.name);
+				if (mineral) {
+					mineral.quantity -= used.quantity;
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				setError(`Mineral ${used.name} not found in inventory. This indicates a calculation bug!`);
+				return;
+			}
+		}
+
+		for (const [, mineralArray] of newMinerals.entries()) {
+			for (const mineral of mineralArray) {
+				if (mineral.quantity < 0) {
+					setError(`Inventory for ${mineral.name} is negative. This indicates a calculation bug!`);
+					return;
+				}
+			}
+		}
+
+		setConsumedSnapshot(snapshot);
+		setMinerals(newMinerals);
+		setToastMessage("Minerals consumed from inventory!");
+	};
+
+	const handleUndo = () => {
+		if (!consumedSnapshot) return;
+
+		setMinerals(consumedSnapshot);
+		setConsumedSnapshot(null);
+		setToastMessage("Inventory restored!");
 	};
 
 	const isReadyToShowInputs: boolean =
@@ -226,10 +283,10 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			<ErrorComponent error={error} />
 			{isReadyToShowOutputs
 					&& mbConstants != null
-					&& <OutputResult 
-							output={result} 
-							unit={calculationUnit} 
-							conversions={mbConstants} 
+					&& <OutputResult
+							output={result}
+							unit={calculationUnit}
+							conversions={mbConstants}
 							desiredMb={desiredOutputInUnits * (mbConstants[unit] ?? 1)}
 						/>
 			}
@@ -266,18 +323,42 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 				{/* Calculate Button */}
 				<div className="mt-6 text-center">
-					<button
-						onClick={handleCalculate}
-						disabled={isCalculating}
-						className={`px-4 py-2 mt-6 rounded transition-colors ${isCalculating
-							? "bg-gray-400 cursor-not-allowed"
-							: "bg-green-600 hover:bg-green-700"
-							} text-white`}
-					>
-						{isCalculating ? "Calculating..." : "Calculate"}
-					</button>
+					<div className="flex justify-center gap-4">
+						<button
+							onClick={handleCalculate}
+							disabled={isCalculating}
+							className={`px-4 py-2 mt-6 rounded transition-colors ${isCalculating
+								? "bg-gray-400 cursor-not-allowed"
+								: "bg-green-600 hover:bg-green-700"
+								} text-white`}
+						>
+							{isCalculating ? "Calculating..." : "Calculate"}
+						</button>
+
+						{consumedSnapshot != null ? (
+							<button
+								onClick={handleUndo}
+								className="px-4 py-2 mt-6 rounded transition-colors bg-amber-500 hover:bg-amber-600 text-white"
+							>
+								Undo
+							</button>
+						) : (
+							result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
+								<button
+									onClick={handleUseMinerals}
+									className="px-4 py-2 mt-6 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+								>
+								Consume
+								</button>
+							)
+						)}
+					</div>
 				</div>
 			</div>}
+
+			{toastMessage != null && (
+				<Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+			)}
 		</div>
 	);
 }
