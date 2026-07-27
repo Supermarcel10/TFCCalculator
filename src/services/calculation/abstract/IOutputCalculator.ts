@@ -1,5 +1,6 @@
-import {QuantifiedMineral, SmeltingComponent} from '@/types';
-import type {IValidationService} from '@/services/calculation/abstract/IValidationService';
+import {QuantifiedMineral, SmeltingComponent} from "@/types";
+import type {IValidationService} from "@/services/calculation/abstract/IValidationService";
+
 
 /**
  * Flags for enabling and disabling functionality.
@@ -15,7 +16,7 @@ export enum Flags {
 	 *
 	 * Requires the {@link intervalMb} value to be present in {@link FlagValues}.
 	 */
-	CLOSEST_ALTERNATIVE = 1
+	CLOSEST_ALTERNATIVE = 1,
 }
 
 /**
@@ -29,7 +30,7 @@ export interface FlagValues {
 	 *
 	 * For e.g. a modpack where an ingot is 100mB would define the interval as 100mB.
 	 */
-	intervalMb?: number;
+	intervalMb? : number;
 
 	/**
 	 * The custom validation service to use.
@@ -46,21 +47,21 @@ export interface CalculationOutput {
 	 * Some statuses may output additional context in {@link statusContext}.
 	 * @see statusContext
 	 */
-	status: OutputCode;
+	status : OutputCode;
 	/**
 	 * Additional context of the status output.
 	 */
-	statusContext?: string;
+	statusContext? : string;
 	/**
 	 * The amount that has been produced.
 	 * This may be different from the targetMb parameter in {@link calculateSmeltingOutput} if flags have been applied.
 	 * @see Flag
 	 */
-	amountMb: number;
+	amountMb : number;
 	/**
 	 * The collection of used minerals to produce the outputs, with their quantities.
 	 */
-	usedMinerals: QuantifiedMineral[];
+	usedMinerals : QuantifiedMineral[];
 }
 
 /**
@@ -109,10 +110,10 @@ export interface IOutputCalculator {
 	 * @param flagValues Values for the given flags.
 	 */
 	calculateSmeltingOutput(
-		targetMb: number,
-		components: SmeltingComponent[],
-		availableMinerals: Map<string, QuantifiedMineral[]>,
-		flags?: Flags,
-		flagValues?: FlagValues
-	): CalculationOutput;
+			targetMb : number,
+			components : SmeltingComponent[],
+			availableMinerals : Map<string, QuantifiedMineral[]>,
+			flags? : Flags,
+			flagValues? : FlagValues
+	) : CalculationOutput;
 }
