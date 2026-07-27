@@ -31,7 +31,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [closestAlternative, setClosestAlternative] = useState<boolean>(true);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [isCalculating, setIsCalculating] = useState<boolean>(false);
 	const [result, setResult] = useState<CalculationOutput | null>(null);
 	const [error, setError] = useState<Error | string | null>(null);
 	const [consumedSnapshot, setConsumedSnapshot] = useState<Map<string, QuantifiedMineral[]> | null>(null);
@@ -76,9 +75,53 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	}, [type, id, version, metal]);
 
 	useEffect(() => {
-		setResult(null);
-		setError(null);
-	}, [desiredOutputInUnits, unit, closestAlternative, minerals]);
+		if (!components || !mbConstants || isLoading) return;
+
+		const hasMinerals = [...minerals.values()].some(arr => arr.some(m => m.quantity > 0));
+
+		if (!hasMinerals) {
+			setResult(null);
+			setError(null);
+			return;
+		}
+
+		const timeoutId = setTimeout(() => {
+			setConsumedSnapshot(null);
+			setCalculationUnit(unit);
+
+			const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
+
+			for (const [category, mineralArray] of minerals) {
+				const nonZeroMinerals = mineralArray.filter(m => m.quantity > 0);
+
+				if (nonZeroMinerals.length > 0) {
+					mineralWithQuantities.set(category, nonZeroMinerals);
+				}
+			}
+
+			const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1);
+
+			const flags: Flags | undefined = closestAlternative ? Flags.CLOSEST_ALTERNATIVE : undefined;
+			const flagValues: FlagValues | undefined = closestAlternative
+				? { intervalMb: mbConstants[unit] ?? 100 }
+				: undefined;
+
+			try {
+				setResult(outputCalculator.calculateSmeltingOutput(
+					desiredOutputInMb,
+					components,
+					mineralWithQuantities,
+					flags,
+					flagValues
+				));
+			} catch (err) {
+				setError(`Failed to calculate! ${err}`);
+				console.error("Error calculating:", err);
+			}
+		}, 300);
+
+		return () => clearTimeout(timeoutId);
+	}, [minerals, desiredOutputInUnits, unit, closestAlternative, components, mbConstants, isLoading]);
 
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
@@ -117,59 +160,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		}
 
 		return newMap;
-	};
-
-	const handleCalculate = async () => {
-		if (!components || !minerals || isCalculating) {
-			return;
-		}
-
-		setConsumedSnapshot(null);
-		setIsCalculating(true);
-		setCalculationUnit(unit);
-		await new Promise(resolve => setTimeout(resolve, 0));
-
-		// TODO: Decouple this somehow into a more generic reusable method of some form?
-		const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
-
-		// Keep non-zero quantities
-		for (const [category, mineralArray] of minerals) {
-			const nonZeroMinerals = mineralArray.filter(m => m.quantity > 0);
-
-			if (nonZeroMinerals.length > 0) {
-				mineralWithQuantities.set(category, nonZeroMinerals);
-			}
-		}
-		// END TODO
-
-		if (mbConstants == null) return;
-		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
-
-		const flags: Flags | undefined = closestAlternative ? Flags.CLOSEST_ALTERNATIVE : undefined;
-		const flagValues: FlagValues | undefined = closestAlternative
-			? { intervalMb: mbConstants[unit] ?? 100 }
-			: undefined;
-
-		try {
-			setResult(outputCalculator.calculateSmeltingOutput(
-					desiredOutputInMb,
-					components,
-					mineralWithQuantities,
-					flags,
-					flagValues
-			));
-		} catch (err) {
-			setError(`Failed to calculate! ${err}`);
-			console.error("Error calculating:", err);
-		} finally {
-			setIsCalculating(false);
-		}
-	};
-
-	const handleKeyPress = async (e: React.KeyboardEvent) => {
-		if (e.key === "Enter") {
-			await handleCalculate();
-		}
 	};
 
 	const deepCloneMinerals = (source: Map<string, QuantifiedMineral[]>): Map<string, QuantifiedMineral[]> =>
@@ -251,7 +241,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 							value={desiredOutputInUnits === 0 ? "" : desiredOutputInUnits}
 							placeholder="0"
 							onChange={handleDesiredTargetChange}
-							onKeyDown={handleKeyPress}
 							min="0"
 							className="flex-1 p-2 rounded-l border border-r-0 border-gray-300 bg-white text-gray-700 no-spinners"
 						/>
@@ -316,25 +305,12 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 							title={capitaliseFirstLetterOfEachWord(mineralName)}
 							minerals={componentMinerals}
 							onQuantityChange={handleMineralQuantityChange}
-							onInputKeyPress={handleKeyPress}
 						/>
 					);
 				})}
 
-				{/* Calculate Button */}
 				<div className="mt-6 text-center">
 					<div className="flex justify-center gap-4">
-						<button
-							onClick={handleCalculate}
-							disabled={isCalculating}
-							className={`px-4 py-2 mt-6 rounded transition-colors ${isCalculating
-								? "bg-gray-400 cursor-not-allowed"
-								: "bg-green-600 hover:bg-green-700"
-								} text-white`}
-						>
-							{isCalculating ? "Calculating..." : "Calculate"}
-						</button>
-
 						{consumedSnapshot != null ? (
 							<button
 								onClick={handleUndo}
