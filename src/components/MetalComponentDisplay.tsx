@@ -269,6 +269,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 						components={components}
 						allMinerals={allMinerals}
 						inventory={inventory}
+						inventoryMap={inventoryMap}
 						onUpdateQuantity={handleUpdateQuantity}
 						onDelete={handleDelete}
 						onAddMineral={handleAddMineral}

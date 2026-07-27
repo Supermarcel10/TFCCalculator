@@ -8,6 +8,7 @@ interface InventoryListProps {
   components: SmeltingComponent[];
   allMinerals: Map<string, QuantifiedMineral[]>;
   inventory: QuantifiedMineral[];
+  inventoryMap: Map<string, QuantifiedMineral[]>;
   onUpdateQuantity: (name: string, quantity: number) => void;
   onDelete: (name: string) => void;
   onAddMineral: (mineral: QuantifiedMineral) => void;
@@ -18,19 +19,13 @@ export function InventoryList({
   components,
   allMinerals,
   inventory,
+  inventoryMap,
   onUpdateQuantity,
   onDelete,
   onAddMineral,
   onMergeToast,
 }: Readonly<InventoryListProps>) {
   const [showModal, setShowModal] = useState(false);
-
-  const inventoryMap = new Map<string, QuantifiedMineral[]>();
-  for (const entry of inventory) {
-    const key = entry.produces;
-    const existing = inventoryMap.get(key) ?? [];
-    inventoryMap.set(key, [...existing, entry]);
-  }
 
   const flatAvailableMinerals = useMemo(() => {
     const result: QuantifiedMineral[] = [];
@@ -46,7 +41,6 @@ export function InventoryList({
       onMergeToast(mineral.name);
     }
     onAddMineral(mineral);
-    setShowModal(false);
   };
 
   return (
