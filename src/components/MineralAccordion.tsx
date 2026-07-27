@@ -6,10 +6,9 @@ interface MineralAccordionProps {
 	title: string;
 	minerals: QuantifiedMineral[];
 	onQuantityChange: (mineralName: string, e: React.ChangeEvent<HTMLInputElement>) => void;
-	onInputKeyPress: (e: React.KeyboardEvent) => Promise<void>;
 }
 
-export function MineralAccordion({ title, minerals, onQuantityChange, onInputKeyPress }: Readonly<MineralAccordionProps>) {
+export function MineralAccordion({ title, minerals, onQuantityChange }: Readonly<MineralAccordionProps>) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -35,7 +34,6 @@ export function MineralAccordion({ title, minerals, onQuantityChange, onInputKey
 												value={mineral.quantity === 0 ? '' : mineral.quantity}
 												placeholder="0"
 												onChange={(e) => onQuantityChange(mineral.name, e)}
-												onKeyDown={onInputKeyPress}
 												min="0"
 												className="w-full p-2 border bg-white border-gray-300 rounded no-spinners"
 										/>

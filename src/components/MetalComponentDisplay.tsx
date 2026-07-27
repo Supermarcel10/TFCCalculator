@@ -8,8 +8,9 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
-import {CalculationOutput, Flags, FlagValues} from "@/services/calculation/abstract/IOutputCalculator";
+import {CalculationOutput, Flags, FlagValues, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 import {OutputCalculator} from "@/services/calculation/OutputCalculator";
+import {Toast} from "@/components/Toast";
 
 
 interface MetalDisplayProps {
@@ -30,9 +31,10 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [closestAlternative, setClosestAlternative] = useState<boolean>(true);
 
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [isCalculating, setIsCalculating] = useState<boolean>(false);
 	const [result, setResult] = useState<CalculationOutput | null>(null);
 	const [error, setError] = useState<Error | string | null>(null);
+	const [consumedSnapshot, setConsumedSnapshot] = useState<Map<string, QuantifiedMineral[]> | null>(null);
+	const [toastMessage, setToastMessage] = useState<string | null>(null);
 
 	useEffect(() => {
 		if (!metal) {
@@ -73,9 +75,52 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	}, [type, id, version, metal]);
 
 	useEffect(() => {
-		setResult(null);
-		setError(null);
-	}, [desiredOutputInUnits, unit, closestAlternative, minerals]);
+		if (!components || !mbConstants || isLoading) return;
+
+		const hasMinerals = [...minerals.values()].some(arr => arr.some(m => m.quantity > 0));
+
+		if (!hasMinerals) {
+			setResult(null);
+			setError(null);
+			return;
+		}
+
+		const timeoutId = setTimeout(() => {
+			setCalculationUnit(unit);
+
+			const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
+
+			for (const [category, mineralArray] of minerals) {
+				const nonZeroMinerals = mineralArray.filter(m => m.quantity > 0);
+
+				if (nonZeroMinerals.length > 0) {
+					mineralWithQuantities.set(category, nonZeroMinerals);
+				}
+			}
+
+			const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1);
+
+			const flags: Flags | undefined = closestAlternative ? Flags.CLOSEST_ALTERNATIVE : undefined;
+			const flagValues: FlagValues | undefined = closestAlternative
+				? { intervalMb: mbConstants[unit] ?? 100 }
+				: undefined;
+
+			try {
+				setResult(outputCalculator.calculateSmeltingOutput(
+					desiredOutputInMb,
+					components,
+					mineralWithQuantities,
+					flags,
+					flagValues
+				));
+			} catch (err) {
+				setError(`Failed to calculate! ${err}`);
+				console.error("Error calculating:", err);
+			}
+		}, 300);
+
+		return () => clearTimeout(timeoutId);
+	}, [minerals, desiredOutputInUnits, unit, closestAlternative, components, mbConstants, isLoading]);
 
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
@@ -88,6 +133,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 
 	const handleMineralQuantityChange = (mineralName: string, e: React.ChangeEvent<HTMLInputElement>) => {
 		const newQty = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+		setConsumedSnapshot(null);
 		setMinerals(prevMinerals => updateMineralQuantity(prevMinerals, mineralName, newQty));
 	};
 
@@ -116,56 +162,57 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		return newMap;
 	};
 
-	const handleCalculate = async () => {
-		if (!components || !minerals || isCalculating) {
-			return;
-		}
+	const deepCloneMinerals = (source: Map<string, QuantifiedMineral[]>): Map<string, QuantifiedMineral[]> =>
+		new Map(
+			[...source.entries()].map(([key, values]) => [
+				key,
+				values.map(v => ({ ...v }))
+			])
+		);
 
-		setIsCalculating(true);
-		setCalculationUnit(unit);
-		await new Promise(resolve => setTimeout(resolve, 0));
+	const handleUseMinerals = () => {
+		if (!result || result.status !== OutputCode.SUCCESS) return;
 
-		// TODO: Decouple this somehow into a more generic reusable method of some form?
-		const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
+		const snapshot = deepCloneMinerals(minerals);
+		const newMinerals = deepCloneMinerals(minerals);
 
-		// Keep non-zero quantities
-		for (const [category, mineralArray] of minerals) {
-			const nonZeroMinerals = mineralArray.filter(m => m.quantity > 0);
+		for (const used of result.usedMinerals) {
+			let found = false;
+			for (const [, mineralArray] of newMinerals.entries()) {
+				const mineral = mineralArray.find(m => m.name === used.name);
+				if (mineral) {
+					mineral.quantity -= used.quantity;
+					found = true;
+					break;
+				}
+			}
 
-			if (nonZeroMinerals.length > 0) {
-				mineralWithQuantities.set(category, nonZeroMinerals);
+			if (!found) {
+				setError(`Mineral ${used.name} not found in inventory. This indicates a calculation bug!`);
+				return;
 			}
 		}
-		// END TODO
 
-		if (mbConstants == null) return;
-		const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1)
-
-		const flags: Flags | undefined = closestAlternative ? Flags.CLOSEST_ALTERNATIVE : undefined;
-		const flagValues: FlagValues | undefined = closestAlternative
-			? { intervalMb: mbConstants[unit] ?? 100 }
-			: undefined;
-
-		try {
-			setResult(outputCalculator.calculateSmeltingOutput(
-					desiredOutputInMb,
-					components,
-					mineralWithQuantities,
-					flags,
-					flagValues
-			));
-		} catch (err) {
-			setError(`Failed to calculate! ${err}`);
-			console.error("Error calculating:", err);
-		} finally {
-			setIsCalculating(false);
+		for (const [, mineralArray] of newMinerals.entries()) {
+			for (const mineral of mineralArray) {
+				if (mineral.quantity < 0) {
+					setError(`Inventory for ${mineral.name} is negative. This indicates a calculation bug!`);
+					return;
+				}
+			}
 		}
+
+		setConsumedSnapshot(snapshot);
+		setMinerals(newMinerals);
+		setToastMessage("Minerals consumed from inventory!");
 	};
 
-	const handleKeyPress = async (e: React.KeyboardEvent) => {
-		if (e.key === "Enter") {
-			await handleCalculate();
-		}
+	const handleUndo = () => {
+		if (!consumedSnapshot) return;
+
+		setMinerals(consumedSnapshot);
+		setConsumedSnapshot(null);
+		setToastMessage("Inventory restored!");
 	};
 
 	const isReadyToShowInputs: boolean =
@@ -194,7 +241,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 							value={desiredOutputInUnits === 0 ? "" : desiredOutputInUnits}
 							placeholder="0"
 							onChange={handleDesiredTargetChange}
-							onKeyDown={handleKeyPress}
 							min="0"
 							className="flex-1 p-2 rounded-l border border-r-0 border-gray-300 bg-white text-gray-700 no-spinners"
 						/>
@@ -259,25 +305,38 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 							title={capitaliseFirstLetterOfEachWord(mineralName)}
 							minerals={componentMinerals}
 							onQuantityChange={handleMineralQuantityChange}
-							onInputKeyPress={handleKeyPress}
 						/>
 					);
 				})}
 
-				{/* Calculate Button */}
-				<div className="mt-6 text-center">
-					<button
-						onClick={handleCalculate}
-						disabled={isCalculating}
-						className={`px-4 py-2 mt-6 rounded transition-colors ${isCalculating
-							? "bg-gray-400 cursor-not-allowed"
-							: "bg-green-600 hover:bg-green-700"
-							} text-white`}
-					>
-						{isCalculating ? "Calculating..." : "Calculate"}
-					</button>
-				</div>
 			</div>}
+
+			{toastMessage != null && (
+				<Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+			)}
+
+			{(consumedSnapshot != null || (result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0)) && (
+				<div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 backdrop-blur  bg-gray-400/20 rounded-xl inline-flex">
+					<div className="flex justify-center gap-4 p-4">
+						{consumedSnapshot != null && (
+							<button
+								onClick={handleUndo}
+								className="px-6 py-3 rounded transition-colors bg-amber-500 hover:bg-amber-600 text-white"
+							>
+								UNDO
+							</button>
+						)}
+						{result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
+							<button
+								onClick={handleUseMinerals}
+								className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+							>
+								CONSUME
+							</button>
+						)}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
