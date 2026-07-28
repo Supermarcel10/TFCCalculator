@@ -325,7 +325,7 @@ describe("OutputCalculator", () => {
 			expectUsedToNotExceedAvailable(availableMinerals, result.usedMinerals);
 		});
 
-		it("should return UNFEASIBLE when search exhausts at 0", () => {
+		it("should return INSUFFICIENT_SPECIFIC_MINERAL_MB when search exhausts at 0", () => {
 			const components = [createComponent("iron", 100, 100)];
 
 			const availableMinerals = new Map(
@@ -342,9 +342,36 @@ describe("OutputCalculator", () => {
 				{intervalMb: 100}
 			);
 
-			// 200 (INSUFFICIENT_TOTAL_MB)
+			// 200 (INSUFFICIENT_SPECIFIC_MINERAL_MB)
 			// 100 (INSUFFICIENT_SPECIFIC_MINERAL_MB)
-			expect(result.status).toBe(OutputCode.UNFEASIBLE);
+			expect(result.status).toBe(OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB);
+			expect(result.statusContext).toContain("Not enough iron for minimum requirement");
+		});
+
+		it("should return INSUFFICIENT_SPECIFIC_MINERAL_MB with CLOSEST_ALTERNATIVE when single mineral is insufficient", () => {
+			const components = [
+				createComponent("iron", 30, 70),
+				createComponent("copper", 30, 70)
+			];
+
+			const availableMinerals = new Map(
+				[
+					["iron", [createQuantifiedMineral("Iron Ore", "iron", 100, 10)]], // 1000 mB
+					["copper", [createQuantifiedMineral("Copper Ore", "copper", 100, 1)]] // 100 mB
+				]
+			);
+
+			const result = sut.calculateSmeltingOutput(
+				1000,
+				components,
+				availableMinerals,
+				Flags.CLOSEST_ALTERNATIVE,
+				{intervalMb: 100}
+			);
+
+			// copper: 100 mB < min requirement of 300 mB
+			expect(result.status).toBe(OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB);
+			expect(result.statusContext).toContain("Not enough copper for minimum requirement");
 		});
 
 		it("should return UNFEASIBLE when intervalMb is not provided", () => {
