@@ -1,10 +1,9 @@
 import {ErrorComponent} from "@/components/ErrorComponent";
-import {MineralAccordion} from "@/components/MineralAccordion";
+import {InventoryList} from "@/components/InventoryList";
 import {OutputResult} from "@/components/OutputResult";
 import {Tooltip} from "@/components/Tooltip";
-import {capitaliseFirstLetterOfEachWord} from "@/functions/utils";
 import {DesiredOutputTypes, Mineral, QuantifiedMineral, SmeltingComponent} from "@/types";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useParams} from "next/navigation";
 import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/metal/[metal]/route";
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
@@ -23,7 +22,8 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const outputCalculator = new OutputCalculator();
 
 	const [components, setComponents] = useState<SmeltingComponent[] | null>(null);
-	const [minerals, setMinerals] = useState<Map<string, QuantifiedMineral[]>>(new Map());
+	const [allMinerals, setAllMinerals] = useState<Map<string, QuantifiedMineral[]>>(new Map());
+	const [inventory, setInventory] = useState<QuantifiedMineral[]>([]);
 	const [mbConstants, setMbConstants] = useState<Record<string, number> | null>(null);
 	const [unit, setUnit] = useState<DesiredOutputTypes>(DesiredOutputTypes.Ingot);
 	const [calculationUnit, setCalculationUnit] = useState<DesiredOutputTypes>(DesiredOutputTypes.Ingot);
@@ -33,8 +33,9 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [result, setResult] = useState<CalculationOutput | null>(null);
 	const [error, setError] = useState<Error | string | null>(null);
-	const [consumedSnapshot, setConsumedSnapshot] = useState<Map<string, QuantifiedMineral[]> | null>(null);
+	const [consumedSnapshot, setConsumedSnapshot] = useState<QuantifiedMineral[] | null>(null);
 	const [toastMessage, setToastMessage] = useState<string | null>(null);
+	const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!metal) {
@@ -48,7 +49,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 	    })
 			.then(data => {
 				setComponents(data.components);
-				setMinerals(new Map(
+				setAllMinerals(new Map(
 					Object.entries(data.minerals).map(([name, minerals] : [string, Mineral[]]) => [
 						name,
 						minerals.map(m => ({ ...m, quantity: 0 }))
@@ -74,29 +75,32 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		Promise.all([metalsTask, constantsTask]).then(_ => setIsLoading(false));
 	}, [type, id, version, metal]);
 
+	const inventoryMap = useMemo(() => {
+		const map = new Map<string, QuantifiedMineral[]>();
+		for (const entry of inventory) {
+			const key = entry.produces;
+			const existing = map.get(key) ?? [];
+			map.set(key, [...existing, entry]);
+		}
+		return map;
+	}, [inventory]);
+
 	useEffect(() => {
 		if (!components || !mbConstants || isLoading) return;
 
-		const hasMinerals = [...minerals.values()].some(arr => arr.some(m => m.quantity > 0));
+		const hasMinerals = inventory.length > 0;
 
 		if (!hasMinerals) {
 			setResult(null);
 			setError(null);
+			setIsCalculating(false);
 			return;
 		}
 
+		setIsCalculating(true);
+
 		const timeoutId = setTimeout(() => {
 			setCalculationUnit(unit);
-
-			const mineralWithQuantities: Map<string, QuantifiedMineral[]> = new Map();
-
-			for (const [category, mineralArray] of minerals) {
-				const nonZeroMinerals = mineralArray.filter(m => m.quantity > 0);
-
-				if (nonZeroMinerals.length > 0) {
-					mineralWithQuantities.set(category, nonZeroMinerals);
-				}
-			}
 
 			const desiredOutputInMb = desiredOutputInUnits * (mbConstants[unit] ?? 1);
 
@@ -109,18 +113,23 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 				setResult(outputCalculator.calculateSmeltingOutput(
 					desiredOutputInMb,
 					components,
-					mineralWithQuantities,
+					inventoryMap,
 					flags,
 					flagValues
 				));
 			} catch (err) {
 				setError(`Failed to calculate! ${err}`);
 				console.error("Error calculating:", err);
+			} finally {
+				setIsCalculating(false);
 			}
 		}, 300);
 
-		return () => clearTimeout(timeoutId);
-	}, [minerals, desiredOutputInUnits, unit, closestAlternative, components, mbConstants, isLoading]);
+		return () => {
+			clearTimeout(timeoutId);
+			setIsCalculating(false);
+		};
+	}, [inventory, inventoryMap, desiredOutputInUnits, unit, closestAlternative, components, mbConstants, isLoading]);
 
 	const handleDesiredTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
@@ -131,86 +140,69 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 		setUnit(e.target.value as DesiredOutputTypes);
 	};
 
-	const handleMineralQuantityChange = (mineralName: string, e: React.ChangeEvent<HTMLInputElement>) => {
-		const newQty = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+	const handleUpdateQuantity = useCallback((name: string, quantity: number) => {
 		setConsumedSnapshot(null);
-		setMinerals(prevMinerals => updateMineralQuantity(prevMinerals, mineralName, newQty));
-	};
-
-	const updateMineralQuantity = (
-		prevMinerals: Map<string, QuantifiedMineral[]>,
-		mineralName: string,
-		newQuantity: number
-	): Map<string, QuantifiedMineral[]> => {
-		const newMap = new Map(prevMinerals);
-
-		for (const [componentName, mineralArray] of newMap.entries()) {
-			const updatedMinerals = [...mineralArray];
-
-			for (let i = 0; i < updatedMinerals.length; i++) {
-				if (updatedMinerals[i].name === mineralName) {
-					updatedMinerals[i] = {
-						...updatedMinerals[i],
-						quantity: newQuantity
-					};
-				}
-			}
-
-			newMap.set(componentName, updatedMinerals);
+		if (quantity <= 0) {
+			setInventory(prev => prev.filter(m => m.name !== name));
+		} else {
+			setInventory(prev => prev.map(m => m.name === name ? { ...m, quantity } : m));
 		}
+	}, []);
 
-		return newMap;
-	};
+	const handleDelete = useCallback((name: string) => {
+		setConsumedSnapshot(null);
+		setInventory(prev => prev.filter(m => m.name !== name));
+	}, []);
 
-	const deepCloneMinerals = (source: Map<string, QuantifiedMineral[]>): Map<string, QuantifiedMineral[]> =>
-		new Map(
-			[...source.entries()].map(([key, values]) => [
-				key,
-				values.map(v => ({ ...v }))
-			])
-		);
+	const handleAddMineral = useCallback((mineral: QuantifiedMineral) => {
+		setConsumedSnapshot(null);
+		setInventory(prev => {
+			const existing = prev.find(m => m.name === mineral.name);
+			if (existing) {
+				return prev.map(m => m.name === mineral.name
+					? { ...m, quantity: m.quantity + mineral.quantity }
+					: m
+				);
+			}
+			return [...prev, mineral];
+		});
+	}, []);
 
 	const handleUseMinerals = () => {
 		if (!result || result.status !== OutputCode.SUCCESS) return;
 
-		const snapshot = deepCloneMinerals(minerals);
-		const newMinerals = deepCloneMinerals(minerals);
+		const snapshot = inventory.map(m => ({ ...m }));
+		const newInventory = inventory.map(m => ({ ...m }));
 
 		for (const used of result.usedMinerals) {
-			let found = false;
-			for (const [, mineralArray] of newMinerals.entries()) {
-				const mineral = mineralArray.find(m => m.name === used.name);
-				if (mineral) {
-					mineral.quantity -= used.quantity;
-					found = true;
-					break;
-				}
-			}
-
-			if (!found) {
+			const entry = newInventory.find(m => m.name === used.name);
+			if (entry) {
+				entry.quantity -= used.quantity;
+			} else {
 				setError(`Mineral ${used.name} not found in inventory. This indicates a calculation bug!`);
 				return;
 			}
 		}
 
-		for (const [, mineralArray] of newMinerals.entries()) {
-			for (const mineral of mineralArray) {
-				if (mineral.quantity < 0) {
-					setError(`Inventory for ${mineral.name} is negative. This indicates a calculation bug!`);
-					return;
-				}
+		for (const entry of newInventory) {
+			if (entry.quantity < 0) {
+				setError(`Inventory for ${entry.name} is negative. This indicates a calculation bug!`);
+				return;
 			}
 		}
 
+		const filtered = newInventory.filter(m => m.quantity > 0);
+
 		setConsumedSnapshot(snapshot);
-		setMinerals(newMinerals);
+		setInventory(filtered);
+		setIsCalculating(true);
 		setToastMessage("Minerals consumed from inventory!");
 	};
 
 	const handleUndo = () => {
 		if (!consumedSnapshot) return;
 
-		setMinerals(consumedSnapshot);
+		setInventory(consumedSnapshot);
 		setConsumedSnapshot(null);
 		setToastMessage("Inventory restored!");
 	};
@@ -230,8 +222,6 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 				<h2 className="text-xl text-center font-bold mb-4">CONSTRAINTS</h2>
 				<p className="text-lg text-center mb-8">Enter any constraints and target ingot count!</p>
 
-				{/* Count Input */}
-				{/* TODO: Investigate some issues with dark reader related to this */}
 				<div className="mb-6">
 					<label htmlFor="desiredOutputCount" className="block mb-2 text-gray-700">Desired Quantity</label>
 					<div className="flex">
@@ -281,34 +271,21 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			}
 
 			{isReadyToShowInputs && <div className="bg-white text-black rounded-lg shadow p-6">
-				<h2 className="text-xl text-center font-bold mb-4">INPUT</h2>
+				<h2 className="text-xl text-center font-bold mb-4">INVENTORY</h2>
 				<p className="text-lg text-center mb-8">Enter all available minerals in your inventory!</p>
 
-				{/* Minerals */}
-				{components?.map(component => {
-					const mineralName = component.mineral.toLowerCase();
-					const componentMinerals = minerals.get(mineralName) ?? [];
-
-					if (componentMinerals.length === 0) {
-						return (
-							<ErrorComponent
-								key={mineralName}
-								error={`Failed to retrieve mineral ${mineralName}`}
-								className="mb-6"
-							/>
-						);
-					}
-
-					return (
-						<MineralAccordion
-							key={mineralName}
-							title={capitaliseFirstLetterOfEachWord(mineralName)}
-							minerals={componentMinerals}
-							onQuantityChange={handleMineralQuantityChange}
-						/>
-					);
-				})}
-
+				{components && (
+					<InventoryList
+						components={components}
+						allMinerals={allMinerals}
+						inventory={inventory}
+						inventoryMap={inventoryMap}
+						onUpdateQuantity={handleUpdateQuantity}
+						onDelete={handleDelete}
+						onAddMineral={handleAddMineral}
+						onMergeToast={(mineralName) => setToastMessage(`Merged with existing ${mineralName} entry!`)}
+					/>
+				)}
 			</div>}
 
 			{toastMessage != null && (
@@ -326,7 +303,7 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 								UNDO
 							</button>
 						)}
-						{result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
+						{!isCalculating && result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
 							<button
 								onClick={handleUseMinerals}
 								className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
