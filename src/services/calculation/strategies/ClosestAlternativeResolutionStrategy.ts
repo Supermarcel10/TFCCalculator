@@ -21,7 +21,8 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
     const exactValidation = validationService.validateInput(
       targetMb,
       normalizedComponents,
-      normalizedInventory
+      normalizedInventory,
+      flagValues?.intervalMb
     );
 
     if (!exactValidation.isValid && exactValidation.error) {
@@ -61,6 +62,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 
     if (this.isInsufficientMbError(error)) {
       return this.handleInsufficientMb(
+        error,
         targetMb,
         normalizedComponents,
         normalizedInventory,
@@ -133,7 +135,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
     let attempts = 0;
 
     while (attempts < ClosestAlternativeResolutionStrategy.MAX_ATTEMPTS && currentMb > 0) {
-      const validation = validationService.validateInput(currentMb, normalizedComponents, normalizedInventory);
+      const validation = validationService.validateInput(currentMb, normalizedComponents, normalizedInventory, interval);
 
       if (validation.isValid) {
         const result = calculationFn(currentMb);
@@ -164,6 +166,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
   }
 
   private handleInsufficientMb(
+    error: CalculationOutput,
     targetMb: number,
     normalizedComponents: NormalizedComponent[],
     normalizedInventory: Map<string, QuantifiedMineral[]>,
@@ -186,11 +189,11 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
       validationService
     );
 
-    return downwardResult ?? this.createUnfeasibleResult("Could not find valid combination at any interval");
+    return downwardResult ?? error;
   }
 
   private validateAndGetInterval(flagValues: FlagValues | undefined): number | null {
-    return flagValues?.intervalMb && flagValues.intervalMb > 0
+    return flagValues?.intervalMb && Number.isFinite(flagValues?.intervalMb) && Number.isInteger(flagValues?.intervalMb) && flagValues.intervalMb > 0
       ? flagValues.intervalMb
       : null;
   }

@@ -108,5 +108,24 @@ describe("ValidationService", () => {
 
 			expect(result.isValid).toBe(true);
 		});
+
+		it("should round up shortfall to whole ingots when intervalMb is provided", () => {
+			const normalizedComponents = [
+				{component : "lead", minPct : 50, maxPct : 100}
+			];
+
+			const normalizedInv = new Map(
+				[
+					["lead", [createQuantifiedMineral("Lead Ore", "lead", 100, 4)]] // 400mB
+				]
+			);
+
+			const result = sut.validateInput(1160, normalizedComponents, normalizedInv, 144);
+
+			expect(result.isValid).toBe(false);
+			expect(result.error?.status).toBe(OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB);
+			expect(result.error?.statusContext).toContain("180mB");
+			expect(result.error?.statusContext).toContain("2 ingots");
+		});
 	});
 });

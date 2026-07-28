@@ -7,7 +7,8 @@ export interface IValidationService {
 	validateInput(
 			targetMb : number,
 			normalizedComponents : NormalizedComponent[],
-			normalizedInv : Map<string, QuantifiedMineral[]>
+			normalizedInv : Map<string, QuantifiedMineral[]>,
+			intervalMb? : number,
 	) : ValidationResult;
 }
 

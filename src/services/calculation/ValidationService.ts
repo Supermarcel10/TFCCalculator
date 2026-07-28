@@ -8,7 +8,8 @@ export class ValidationService implements IValidationService {
 	validateInput(
 			targetMb : number,
 			normalizedComponents : NormalizedComponent[],
-			normalizedInv : Map<string, QuantifiedMineral[]>
+			normalizedInv : Map<string, QuantifiedMineral[]>,
+			intervalMb? : number,
 	) : ValidationResult {
 		if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
 			return {
@@ -42,13 +43,13 @@ export class ValidationService implements IValidationService {
 
  			if (available < minMb) {
 				return {
- 					isValid : false,
- 					error : {
-  						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-  						statusContext : `Not enough ${component} for minimum requirement`,
-  						amountMb : 0,
-  						usedMinerals : []
- 					}
+  					isValid : false,
+  					error : {
+   						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
+   						statusContext : `Not enough ${component} for minimum requirement. ${this.formatShortfall(minMb - available, intervalMb)}`,
+   						amountMb : 0,
+   						usedMinerals : []
+  					}
 				};
 		  }
    	}
@@ -58,7 +59,7 @@ export class ValidationService implements IValidationService {
 				isValid : false,
 				error : {
 					status : OutputCode.INSUFFICIENT_TOTAL_MB,
-					statusContext : "Not enough total material available",
+					statusContext : `Not enough total material available. ${this.formatShortfall(targetMb - totalAvailableFromRecipe, intervalMb)}`,
 					amountMb : 0,
 					usedMinerals : []
 				}
@@ -66,6 +67,17 @@ export class ValidationService implements IValidationService {
 		}
 
 		return {isValid : true};
+	}
+
+	private formatShortfall(shortfallMb : number, intervalMb? : number) : string {
+		if (!intervalMb || !Number.isFinite(intervalMb) || !Number.isInteger(intervalMb) || intervalMb <= 0) {
+			return `You are ${shortfallMb}mB short`;
+		}
+
+		const ingots = Math.ceil(shortfallMb / intervalMb);
+		const plural = ingots !== 1 ? 's' : '';
+
+		return `You are ${shortfallMb}mB (about ${ingots} ingot${plural}) short`;
 	}
 
 	private totalAvailableForComponent(
