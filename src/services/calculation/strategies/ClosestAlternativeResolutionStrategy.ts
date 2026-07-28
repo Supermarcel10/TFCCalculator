@@ -62,6 +62,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
 
     if (this.isInsufficientMbError(error)) {
       return this.handleInsufficientMb(
+        error,
         targetMb,
         normalizedComponents,
         normalizedInventory,
@@ -165,6 +166,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
   }
 
   private handleInsufficientMb(
+    error: CalculationOutput,
     targetMb: number,
     normalizedComponents: NormalizedComponent[],
     normalizedInventory: Map<string, QuantifiedMineral[]>,
@@ -187,7 +189,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
       validationService
     );
 
-    return downwardResult ?? this.createUnfeasibleResult("Could not find valid combination at any interval");
+    return downwardResult ?? error;
   }
 
   private validateAndGetInterval(flagValues: FlagValues | undefined): number | null {
