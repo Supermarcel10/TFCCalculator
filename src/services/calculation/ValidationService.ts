@@ -46,7 +46,7 @@ export class ValidationService implements IValidationService {
   					isValid : false,
   					error : {
    						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-   						statusContext : `Not enough ${component} for minimum requirement (${this.formatShortfall(minMb - available, intervalMb)})`,
+   						statusContext : `Not enough ${component} for minimum requirement. ${this.formatShortfall(minMb - available, intervalMb)}`,
    						amountMb : 0,
    						usedMinerals : []
   					}
@@ -59,7 +59,7 @@ export class ValidationService implements IValidationService {
 				isValid : false,
 				error : {
 					status : OutputCode.INSUFFICIENT_TOTAL_MB,
-					statusContext : `Not enough total material available (${this.formatShortfall(targetMb - totalAvailableFromRecipe, intervalMb)})`,
+					statusContext : `Not enough total material available. ${this.formatShortfall(targetMb - totalAvailableFromRecipe, intervalMb)}`,
 					amountMb : 0,
 					usedMinerals : []
 				}
@@ -71,15 +71,13 @@ export class ValidationService implements IValidationService {
 
 	private formatShortfall(shortfallMb : number, intervalMb? : number) : string {
 		if (!intervalMb || !Number.isFinite(intervalMb) || !Number.isInteger(intervalMb) || intervalMb <= 0) {
-			return `${shortfallMb}mB short`;
+			return `You are ${shortfallMb}mB short`;
 		}
 
-		const ingots = shortfallMb / intervalMb;
-		const ingotsStr = (shortfallMb - Math.floor(shortfallMb) <= 1.0) ?
-			ingots.toFixed(0) :
-			ingots.toFixed(3);
+		const ingots = Math.ceil(shortfallMb / intervalMb);
+		const plural = ingots !== 1 ? 's' : '';
 
-		return `${shortfallMb}mB or ${ingotsStr} ingot(s) short`;
+		return `You are ${shortfallMb}mB (about ${ingots} ingot${plural}) short`;
 	}
 
 	private totalAvailableForComponent(
