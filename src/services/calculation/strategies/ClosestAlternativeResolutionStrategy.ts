@@ -21,7 +21,8 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
     const exactValidation = validationService.validateInput(
       targetMb,
       normalizedComponents,
-      normalizedInventory
+      normalizedInventory,
+      flagValues?.intervalMb
     );
 
     if (!exactValidation.isValid && exactValidation.error) {
@@ -133,7 +134,7 @@ export class ClosestAlternativeResolutionStrategy implements IOutputResolutionSt
     let attempts = 0;
 
     while (attempts < ClosestAlternativeResolutionStrategy.MAX_ATTEMPTS && currentMb > 0) {
-      const validation = validationService.validateInput(currentMb, normalizedComponents, normalizedInventory);
+      const validation = validationService.validateInput(currentMb, normalizedComponents, normalizedInventory, interval);
 
       if (validation.isValid) {
         const result = calculationFn(currentMb);

@@ -10,11 +10,11 @@ export class ExactMatchResolutionStrategy implements IOutputResolutionStrategy {
 		targetMb: number,
 		normalizedComponents: NormalizedComponent[],
 		normalizedInventory: Map<string, QuantifiedMineral[]>,
-		_: FlagValues | undefined,
+		flagValues: FlagValues | undefined,
 		calculationFn: (amount: number) => CalculationOutput | null,
 		validationService: IValidationService
 	): CalculationOutput {
-		const validation = validationService.validateInput(targetMb, normalizedComponents, normalizedInventory);
+		const validation = validationService.validateInput(targetMb, normalizedComponents, normalizedInventory, flagValues?.intervalMb);
 		if (!validation.isValid && validation.error) {
 			return validation.error;
 		}

@@ -6,10 +6,6 @@ import {OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 describe("ValidationService", () => {
 	let sut = new ValidationService();
 
-	beforeEach(() => {
-		sut.setIntervalMb(144);
-	});
-
 	describe("validateInput", () => {
 		it("should return valid for correct input", () => {
 			const normalizedComponents = [

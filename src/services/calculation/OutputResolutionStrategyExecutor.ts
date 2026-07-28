@@ -39,12 +39,6 @@ export default class OutputResolutionStrategyExecutor implements IOutputResoluti
 	  flags? : Flags,
 		flagValues? : FlagValues,
 	) {
-  	if (flagValues?.intervalMb) {
-	  	this.validationService.setIntervalMb(flagValues?.intervalMb);
-  	} else {
-	  	this.validationService.resetIntervalMb();
-  	}
-
   	const strategy = this.outputResolutionStrategySelector.selectStrategy(flags, flagValues);
 
   	const calculationFn = (amount: number) => this.attemptCalculation(

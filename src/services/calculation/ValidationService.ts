@@ -5,20 +5,11 @@ import {NormalizedComponent} from "@/services/calculation/abstract/IInputNormali
 
 
 export class ValidationService implements IValidationService {
-	#intervalMb: number = 144;
-
-	setIntervalMb(intervalMb: number): void {
-		this.#intervalMb = intervalMb;
-	}
-
-	resetIntervalMb(): void {
-		this.#intervalMb = 144;
-	}
-
 	validateInput(
 			targetMb : number,
 			normalizedComponents : NormalizedComponent[],
-			normalizedInv : Map<string, QuantifiedMineral[]>
+			normalizedInv : Map<string, QuantifiedMineral[]>,
+			intervalMb? : number,
 	) : ValidationResult {
 		if (!Number.isFinite(targetMb) || targetMb <= 0 || !Number.isInteger(targetMb)) {
 			return {
@@ -52,20 +43,13 @@ export class ValidationService implements IValidationService {
 
  			if (available < minMb) {
 				return {
- 					isValid : false,
- 					error : {
-  						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
-  						statusContext : `Not enough ${component} for minimum requirement (` +
-  							`${minMb - available}` +
-  							"mB or " +
-  							`${(minMb - available - Math.floor(minMb - available) <= 1.0) ?
-  								((minMb - available) / this.#intervalMb).toFixed(0) :
-  								((minMb - available) / this.#intervalMb).toFixed(3)
-  							}` +
-  							" ingot(s) short)",
-  						amountMb : 0,
-  						usedMinerals : []
- 					}
+  					isValid : false,
+  					error : {
+   						status : OutputCode.INSUFFICIENT_SPECIFIC_MINERAL_MB,
+   						statusContext : `Not enough ${component} for minimum requirement (${this.formatShortfall(minMb - available, intervalMb)})`,
+   						amountMb : 0,
+   						usedMinerals : []
+  					}
 				};
 		  }
    	}
@@ -75,14 +59,7 @@ export class ValidationService implements IValidationService {
 				isValid : false,
 				error : {
 					status : OutputCode.INSUFFICIENT_TOTAL_MB,
-					statusContext : "Not enough total material available (" +
-						`${targetMb - totalAvailableFromRecipe}` +
-						"mB or " +
-						`${(targetMb - totalAvailableFromRecipe - Math.floor(targetMb - totalAvailableFromRecipe) <= 1.0) ?
-							((targetMb - totalAvailableFromRecipe) / this.#intervalMb).toFixed(0) :
-							((targetMb - totalAvailableFromRecipe) / this.#intervalMb).toFixed(3)
-						}` +
-						" ingots short)",
+					statusContext : `Not enough total material available (${this.formatShortfall(targetMb - totalAvailableFromRecipe, intervalMb)})`,
 					amountMb : 0,
 					usedMinerals : []
 				}
@@ -90,6 +67,19 @@ export class ValidationService implements IValidationService {
 		}
 
 		return {isValid : true};
+	}
+
+	private formatShortfall(shortfallMb : number, intervalMb? : number) : string {
+		if (!intervalMb || !Number.isFinite(intervalMb) || !Number.isInteger(intervalMb) || intervalMb <= 0) {
+			return `${shortfallMb}mB short`;
+		}
+
+		const ingots = shortfallMb / intervalMb;
+		const ingotsStr = (shortfallMb - Math.floor(shortfallMb) <= 1.0) ?
+			ingots.toFixed(0) :
+			ingots.toFixed(3);
+
+		return `${shortfallMb}mB or ${ingotsStr} ingot(s) short`;
 	}
 
 	private totalAvailableForComponent(
