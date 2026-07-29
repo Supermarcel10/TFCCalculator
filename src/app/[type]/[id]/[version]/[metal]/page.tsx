@@ -52,7 +52,7 @@ export default function MetalPage() {
 							title={replaceUnderscoreWithSpace(metalString).toUpperCase()}
 							subheading={subheadingString}
 							ariaPreviousScreenName="metal selection"
-							handleBackURI={`/${type}/${id}/${version}/metals`}
+							handleBackURI="/"
 							dropdown={{
 								options: dropdownOptions,
 								selected: metalString,
