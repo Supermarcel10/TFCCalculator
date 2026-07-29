@@ -26,6 +26,7 @@ export function InventoryList({
   onMergeToast,
 }: Readonly<InventoryListProps>) {
   const [showModal, setShowModal] = useState(false);
+  const [editingQty, setEditingQty] = useState<Record<string, string>>({});
 
   const flatAvailableMinerals = useMemo(() => {
     const result: QuantifiedMineral[] = [];
@@ -95,14 +96,42 @@ export function InventoryList({
                       <input
                         type="number"
                         id={`qty-${entry.name}`}
-                        value={entry.quantity <= 0 ? "" : entry.quantity}
+                        value={
+                          editingQty[entry.name] !== undefined
+                            ? editingQty[entry.name]
+                            : entry.quantity <= 0
+                              ? ""
+                              : entry.quantity
+                        }
                         placeholder="0"
                         onChange={(e) => {
+                          setEditingQty((prev) => ({
+                            ...prev,
+                            [entry.name]: e.target.value,
+                          }));
                           const val =
                             e.target.value === ""
                               ? 0
                               : parseInt(e.target.value, 10);
-                          onUpdateQuantity(entry.name, isNaN(val) ? 0 : val);
+                          if (!isNaN(val) && val > 0) {
+                            onUpdateQuantity(entry.name, val);
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const raw = editingQty[entry.name] ?? e.target.value;
+                          const val = raw === "" ? 0 : parseInt(raw, 10);
+
+                          if (isNaN(val) || val <= 0) {
+                            onDelete(entry.name);
+                          } else {
+                            onUpdateQuantity(entry.name, val);
+                          }
+
+                          setEditingQty((prev) => {
+                            const next = { ...prev };
+                            delete next[entry.name];
+                            return next;
+                          });
                         }}
                         min="0"
                         className="w-20 p-1 border border-gray-300 rounded no-spinners bg-white text-sm text-center"
