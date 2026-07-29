@@ -51,7 +51,7 @@ export default function MetalPage() {
 					<HeadingWithBackButton
 							title={replaceUnderscoreWithSpace(metalString).toUpperCase()}
 							subheading={subheadingString}
-							ariaPreviousScreenName="metal selection"
+							ariaPreviousScreenName="home"
 							handleBackURI="/"
 							dropdown={{
 								options: dropdownOptions,
