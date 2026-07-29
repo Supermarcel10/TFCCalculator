@@ -9,6 +9,7 @@ import {ApiResponse as MetalsApiResponse} from "@/app/api/[type]/[id]/[version]/
 import {ApiResponse as ConstantsApiResponse} from "@/app/api/[type]/[id]/[version]/constants/route";
 import {CalculationOutput, Flags, FlagValues, OutputCode} from "@/services/calculation/abstract/IOutputCalculator";
 import {OutputCalculator} from "@/services/calculation/OutputCalculator";
+import {GlassButton} from "@/components/GlassButton";
 import {Toast} from "@/components/Toast";
 
 
@@ -293,27 +294,25 @@ export function MetalComponentDisplay({ metal }: Readonly<MetalDisplayProps>) {
 			)}
 
 			{(consumedSnapshot != null || (result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0)) && (
-				<div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 backdrop-blur  bg-gray-400/20 rounded-xl inline-flex">
-					<div className="flex justify-center gap-4 p-4">
+					<div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-xl flex gap-4 p-4">
 						{consumedSnapshot != null && (
-							<button
+							<GlassButton
 								onClick={handleUndo}
-								className="px-6 py-3 rounded transition-colors bg-amber-500 hover:bg-amber-600 text-white"
+								className="px-6 py-3 text-white bg-amber-500/60 hover:bg-amber-600/90 border border-amber-400/30"
 							>
 								UNDO
-							</button>
+							</GlassButton>
 						)}
 						{!isCalculating && result != null && result.status === OutputCode.SUCCESS && result.usedMinerals.length > 0 && (
-							<button
+							<GlassButton
 								onClick={handleUseMinerals}
-								className="px-6 py-3 rounded transition-colors bg-blue-600 hover:bg-blue-700 text-white"
+								className="px-6 py-3 text-white bg-blue-600/60 hover:bg-blue-700/90 border border-blue-400/30"
 							>
 								CONSUME
-							</button>
+							</GlassButton>
 						)}
 					</div>
-				</div>
-			)}
+				)}
 		</div>
 	);
 }
