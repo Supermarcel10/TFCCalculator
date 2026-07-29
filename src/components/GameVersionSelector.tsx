@@ -13,7 +13,9 @@ export function GameVersionSelector() {
 	const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
 
 	const [isLoading, setIsLoading] = useState(true);
+	const [isCalculating, setIsCalculating] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [calculationError, setCalculationError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchPackages = async () => {
@@ -80,7 +82,7 @@ export function GameVersionSelector() {
 		setSelectedVersion(e.target.value);
 	};
 
-	const handleCalculate = () => {
+	const handleCalculate = async () => {
 		if (!selectedDisplayName || !selectedVersion || !data) return;
 
 		const selectedItem = (data[selectedType] as unknown as Record<string, BaseGameVersion[]>)[selectedDisplayName].find(
@@ -90,7 +92,25 @@ export function GameVersionSelector() {
 		if (!selectedItem) return;
 
 		const versionPath = `${selectedItem.gameVersion}_${selectedItem.version}`;
-		router.push(`/${selectedType}/${selectedItem.id}/${versionPath}/metals`);
+		setIsCalculating(true);
+		setCalculationError(null);
+
+		// TODO: Update logic to move directly to calculate screen with no metal selected when possible in the future
+		try {
+			const response = await fetch(`/api/${selectedType}/${selectedItem.id}/${versionPath}/metal`);
+			if (!response.ok) throw new Error("Failed to fetch metals");
+			const metals = await response.json();
+			if (!Array.isArray(metals) || metals.length === 0) {
+				setCalculationError("No metals available for this selection");
+				return;
+			}
+			router.push(`/${selectedType}/${selectedItem.id}/${versionPath}/${metals[0].name}`);
+		} catch (e) {
+			setCalculationError("Failed to load metals");
+			console.error(e);
+		} finally {
+			setIsCalculating(false);
+		}
 	};
 
 	if (isLoading) return <LoadingSpinner />;
@@ -142,12 +162,16 @@ export function GameVersionSelector() {
 
 				<button
 					onClick={handleCalculate}
-					disabled={!selectedType || !selectedDisplayName || !selectedVersion}
+					disabled={!selectedType || !selectedDisplayName || !selectedVersion || isCalculating}
 					className="w-full sm:w-auto px-6 py-2 rounded primary"
 					aria-label="Go to calculator"
 				>
-					Calculate
+				{isCalculating ? "Loading..." : "Calculate"}
 				</button>
+
+				{calculationError && (
+					<p className="text-red-400 text-center">{calculationError}</p>
+				)}
 			</div>
 		</div>
 	);
