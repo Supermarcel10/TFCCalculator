@@ -15,9 +15,6 @@ function readPackage(pkg) {
     if (pkg.dependencies.picomatch) {
       pkg.dependencies.picomatch = '>=4.0.4';
     }
-    if (pkg.dependencies['@opentelemetry/core']) {
-      pkg.dependencies['@opentelemetry/core'] = '>=2.8.0';
-    }
     if (pkg.dependencies['@babel/core']) {
       pkg.dependencies['@babel/core'] = '>=7.29.6 <8.0.0';
     }
