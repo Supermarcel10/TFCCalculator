@@ -51,8 +51,8 @@ export default function MetalPage() {
 					<HeadingWithBackButton
 							title={replaceUnderscoreWithSpace(metalString).toUpperCase()}
 							subheading={subheadingString}
-							ariaPreviousScreenName="metal selection"
-							handleBackURI={`/${type}/${id}/${version}/metals`}
+							ariaPreviousScreenName="home"
+							handleBackURI="/"
 							dropdown={{
 								options: dropdownOptions,
 								selected: metalString,
