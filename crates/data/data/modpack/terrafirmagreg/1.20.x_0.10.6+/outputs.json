@@ -197,6 +197,15 @@
       ]
     },
     {
+      "name": "black_steel",
+      "producible": false,
+      "default": [
+        "ingot",
+        "dust",
+        "nugget"
+      ]
+    },
+    {
       "name": "red_alloy",
       "components": [
         {
