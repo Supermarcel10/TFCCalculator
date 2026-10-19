@@ -1,6 +1,9 @@
 import React from "react";
 import type {Metadata} from "next";
+import {notFound} from "next/navigation";
 import {capitaliseFirstLetterOfEachWord} from "@/functions/utils";
+import {isKnownVersionRoute} from "@/functions/gameVersions";
+import gameVersions from "@/data/gameversions.json";
 
 
 type ParamProps = {
@@ -55,12 +58,16 @@ export async function generateMetadata({params} : ParamProps) : Promise<Metadata
 	};
 }
 
-export default function VersionLayout(
+export default async function VersionLayout(
 		{
-			children
+			children,
+			params
 		} : {
 			children : React.ReactNode;
 			params : ParamProps['params'];
 		}) {
+	const {type, id, version} = await params;
+	if (!isKnownVersionRoute(gameVersions, type, id, version)) notFound();
+
 	return children;
 }

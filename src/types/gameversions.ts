@@ -1,4 +1,5 @@
-export type VersionType = "mod" | "modpack";
+export const VERSION_TYPES = ["mod", "modpack"] as const;
+export type VersionType = typeof VERSION_TYPES[number];
 
 export interface BaseGameVersion {
 	id : string;
