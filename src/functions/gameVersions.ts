@@ -1,7 +1,5 @@
-import {GameVersions, VersionType} from "@/types/gameversions";
+import {GameVersions, VersionType, VERSION_TYPES} from "@/types/gameversions";
 
-
-const VERSION_TYPES : readonly VersionType[] = ["mod", "modpack"];
 
 export function isKnownVersionRoute(
 		gameVersions : GameVersions,
